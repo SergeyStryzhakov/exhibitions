@@ -1,0 +1,20 @@
+<component name="InspectionProjectProfileManager">
+  <profile version="1.0">
+    <option name="myName" value="Project Default" />
+    <inspection_tool class="DuplicatedCode" enabled="true" level="WEAK WARNING" enabled_by_default="true">
+      <Languages>
+        <language minSize="65" name="Java" />
+      </Languages>
+    </inspection_tool>
+    <inspection_tool class="MavenPackageUpdate" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="excludeList">
+        <list>
+          <option value="org.junit.jupiter:junit-jupiter" />
+          <option value="junit:junit" />
+          <option value="org.slf4j:slf4j-api" />
+          <option value="org.slf4j:slf4j-log4j12" />
+        </list>
+      </option>
+    </inspection_tool>
+  </profile>
+</component>
