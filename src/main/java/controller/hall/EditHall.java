@@ -1,9 +1,11 @@
 package controller.hall;
 
 import entity.Hall;
+import exception.DBException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import service.HallService;
+import utils.Utils;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -19,17 +21,25 @@ public class EditHall extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        int hallId = Integer.parseInt(req.getParameter("hallid"));
-        req.setAttribute("hall", hallService.getHallById(hallId));
-        LOGGER.info("Edit hall id " + hallId + " started (GET request)");
+        try {
+            int hallId = Integer.parseInt(req.getParameter("hallid"));
+            req.setAttribute("hall", hallService.getHallById(hallId));
+            LOGGER.info("Edit hall id " + hallId + " started (GET request)");
+        } catch (DBException | NumberFormatException e) {
+            Utils.setErrorMessage(req, resp, e.getMessage());
+        }
         getServletContext().getRequestDispatcher("/WEB-INF/jsp/halls/edit_hall.jsp")
                 .forward(req, resp);
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        int hallId = Integer.parseInt(req.getParameter("hallid"));
-        processRequest(req, hallId);
+        try {
+            int hallId = Integer.parseInt(req.getParameter("hallid"));
+            processRequest(req, hallId);
+        } catch (DBException | NumberFormatException e) {
+            Utils.setErrorMessage(req, resp, e.getMessage());
+        }
         resp.sendRedirect(req.getContextPath() + "/halls/show");
     }
 
@@ -39,7 +49,7 @@ public class EditHall extends HttpServlet {
 
     }
 
-    private void processRequest(HttpServletRequest req, int hallId) {
+    private void processRequest(HttpServletRequest req, int hallId) throws DBException {
         Hall editHall = hallService.getHallById(hallId);
         editHall.setName(req.getParameter("name"));
         editHall.setAddress(req.getParameter("address"));

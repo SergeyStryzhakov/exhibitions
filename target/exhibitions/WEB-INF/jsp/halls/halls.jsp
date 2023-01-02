@@ -66,13 +66,7 @@
         </div>
     </div>
 </div>
-<script lang="javascript">
-    $('#itemsPerPage').on('change', function () {
-        $.get("${sessionScope.origin}", {itemsPerPage: $('#itemsPerPage').val()})
-            .done(function () {
-                location.reload();
-            });
-    });
-</script>
+<script src="${path}/assets/js/func.js"></script>
+
 </body>
 </html>

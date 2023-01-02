@@ -1,5 +1,7 @@
 package entity;
 
+import java.util.List;
+
 public class Exhibition {
     private int id;
     private String title;
@@ -12,6 +14,7 @@ public class Exhibition {
     private int price;
     private String image;
     private String stateFromDb;
+    private List<Hall> halls;
 
     public int getId() {
         return id;
@@ -101,6 +104,13 @@ public class Exhibition {
         this.stateFromDb = stateFromDb;
     }
 
+    public List<Hall> getHalls() {
+        return halls;
+    }
+
+    public void setHalls(List<Hall> halls) {
+        this.halls = halls;
+    }
 
     public static class Builder {
         private final Exhibition exhibition;
@@ -161,6 +171,11 @@ public class Exhibition {
 
         public Builder state(String state) {
             exhibition.setStateFromDb(state);
+            return this;
+        }
+
+        public Builder halls(List<Hall> halls) {
+            exhibition.setHalls(halls);
             return this;
         }
 

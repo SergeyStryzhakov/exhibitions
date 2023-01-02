@@ -1,6 +1,7 @@
 package controller.ticket;
 
 import entity.User;
+import exception.DBException;
 import exception.LoginException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,10 +36,8 @@ private TicketService ticketService;
                 ticketService.deleteTicket(ticketId);
                 resp.sendRedirect(req.getContextPath() + "/tickets/show");
             }
-        }catch (LoginException ex) {
-            LOGGER.error(ex.getMessage());
-            ex.printStackTrace();
-            Utils.setErrorMessage(req, resp, ex.getMessage());
+        }catch (LoginException | DBException ex) {
+               Utils.setErrorMessage(req, resp, ex.getMessage());
         }
     }
 }

@@ -2,6 +2,7 @@ package controller.ticket;
 
 import entity.Ticket;
 import entity.User;
+import exception.DBException;
 import exception.LoginException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,25 +27,29 @@ public class BuyTicket extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        try {
+            processRequest(req, resp);
+        } catch (LoginException | DBException ex) {
+            Utils.setErrorMessage(req, resp, ex.getMessage());
+        }
+
+    }
+
+    private void processRequest(HttpServletRequest req, HttpServletResponse resp)
+            throws LoginException, DBException, IOException {
         User user = (User) req.getSession().getAttribute("user");
         int hallId = Integer.parseInt(req.getParameter("hid"));
         int exhibitionId = Integer.parseInt(req.getParameter("exid"));
         int price = Integer.parseInt(req.getParameter("price"));
-        Ticket ticket = new Ticket();
-        ticket.setUserId(user.getId());
-        ticket.setExhibitionId(exhibitionId);
-        ticket.setHallId(hallId);
-        ticket.setPrice(price);
-        ticket.setOperationDate(new Timestamp(System.currentTimeMillis()));
-        try {
-            if (Validation.isAuthUser(user)) {
-                ticketService.createTicket(ticket);
-                req.getSession().setAttribute("user", userService.getUserById(user.getId()));
-            }
-        } catch (LoginException ex) {
-            LOGGER.error(ex.getMessage());
-            ex.printStackTrace();
-            Utils.setErrorMessage(req, resp, ex.getMessage());
+        if (Validation.isAuthUser(user)) {
+            Ticket ticket = new Ticket();
+            ticket.setUserId(user.getId());
+            ticket.setExhibitionId(exhibitionId);
+            ticket.setHallId(hallId);
+            ticket.setPrice(price);
+            ticket.setOperationDate(new Timestamp(System.currentTimeMillis()));
+            ticketService.createTicket(ticket);
+            req.getSession().setAttribute("user", userService.getUserById(user.getId()));
         }
         resp.sendRedirect(req.getContextPath() + "/exhibitions/show?exid=" + exhibitionId);
     }

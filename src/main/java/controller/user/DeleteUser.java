@@ -1,6 +1,7 @@
 package controller.user;
 
 import entity.User;
+import exception.DBException;
 import exception.LoginException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,10 +31,8 @@ public class DeleteUser extends HttpServlet {
                 userService.deleteUser(userId);
                 resp.sendRedirect(req.getContextPath() + "/users/show");
             }
-        } catch (LoginException ex) {
-            LOGGER.error(ex.getMessage());
-            ex.printStackTrace();
-            Utils.setErrorMessage(req, resp, ex.getMessage());
+        } catch (DBException | LoginException e) {
+            Utils.setErrorMessage(req, resp, e.getMessage());
         }
     }
 

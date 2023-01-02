@@ -4,11 +4,13 @@ import dto.ExhibitionDto;
 import entity.Exhibition;
 import entity.ExhibitionState;
 import entity.Hall;
+import exception.DBException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import service.ExhibitionService;
 import service.HallService;
 import service.ThemeService;
+import utils.Utils;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
@@ -49,12 +51,15 @@ public class EditExhibition extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
-        String exid = req.getParameter("exid");
-        int exhibitionId = Integer.parseInt(exid);
-        req.setAttribute("ex", exhibitionService.getExhibitionById(exhibitionId));
-        req.setAttribute("themes", themeService.getThemes());
-        req.setAttribute("halls", hallService.getHalls());
-        req.setAttribute("states", ExhibitionState.values());
+        try {
+            int exhibitionId = Integer.parseInt(req.getParameter("exid"));
+            req.setAttribute("ex", exhibitionService.getExhibitionById(exhibitionId));
+            req.setAttribute("themes", themeService.getThemes());
+            req.setAttribute("halls", hallService.getHalls());
+            req.setAttribute("states", ExhibitionState.values());
+        } catch (DBException e) {
+            Utils.setErrorMessage(req, resp, e.getMessage());
+        }
         getServletContext().getRequestDispatcher("/WEB-INF/jsp/exhibitions/edit_exhibition.jsp")
                 .forward(req, resp);
     }
@@ -62,14 +67,18 @@ public class EditExhibition extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
-        int exhibitionId = Integer.parseInt(req.getParameter("exid"));
-        String uploadImagePath = getServletContext().getRealPath("")
-                + UPLOAD_DIRECTORY + File.separator + exhibitionId;
-        processRequest(req, exhibitionId, uploadImagePath);
-        resp.sendRedirect(req.getContextPath() + "/exhibitions/show");
+        try {
+            int exhibitionId = Integer.parseInt(req.getParameter("exid"));
+            String uploadImagePath = getServletContext().getRealPath("")
+                    + UPLOAD_DIRECTORY + File.separator + exhibitionId;
+            processRequest(req, exhibitionId, uploadImagePath);
+            resp.sendRedirect(req.getContextPath() + "/exhibitions/show");
+        } catch (DBException e) {
+            Utils.setErrorMessage(req, resp, e.getMessage());
+        }
     }
 
-    private List<Hall> processHallList(String[] halls) {
+    private List<Hall> processHallList(String[] halls) throws DBException {
         List<Hall> hallList = new ArrayList<>();
         for (String hall : halls) {
             int hallId = Integer.parseInt(hall);
@@ -94,7 +103,7 @@ public class EditExhibition extends HttpServlet {
     }
 
     private void processRequest(HttpServletRequest req, int exId, String uploadImagePath)
-            throws ServletException, IOException {
+            throws ServletException, IOException, DBException {
         ExhibitionDto editEx = exhibitionService.getExhibitionById(exId);
         editEx.setTitle(req.getParameter("title"));
         editEx.setDescription(req.getParameter("description"));

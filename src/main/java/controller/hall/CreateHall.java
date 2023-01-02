@@ -1,9 +1,11 @@
 package controller.hall;
 
 import entity.Hall;
+import exception.DBException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import service.HallService;
+import utils.Utils;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -33,11 +35,15 @@ public class CreateHall extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
-        processRequest(req);
+        try {
+            processRequest(req);
+        } catch (DBException e) {
+            Utils.setErrorMessage(req, resp, e.getMessage());
+        }
         resp.sendRedirect(req.getContextPath() + "/halls/show");
     }
 
-    private void processRequest(HttpServletRequest req) {
+    private void processRequest(HttpServletRequest req) throws DBException {
         Hall hall = new Hall.Builder()
                 .name(req.getParameter("name"))
                 .address(req.getParameter("address"))

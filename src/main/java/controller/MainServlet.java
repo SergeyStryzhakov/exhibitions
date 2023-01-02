@@ -2,6 +2,7 @@ package controller;
 
 
 import dto.ExhibitionDto;
+import exception.DBException;
 import service.ExhibitionService;
 import service.ThemeService;
 import utils.Pagination;
@@ -14,7 +15,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @WebServlet(value = {"/main"})
 public class MainServlet extends HttpServlet {
@@ -32,13 +32,20 @@ public class MainServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        processRequest(req);
-        getServletContext()
-                .getRequestDispatcher("/main.jsp")
-                .forward(req, resp);
+        try {
+            processRequest(req);
+            getServletContext()
+                    .getRequestDispatcher("/main.jsp")
+                    .forward(req, resp);
+        } catch (DBException e) {
+            Utils.setErrorMessage(req, resp, e.getMessage());
+        }
+
     }
 
-    private void processRequest(HttpServletRequest req) {
+    private void processRequest(HttpServletRequest req) throws DBException {
+        String sort = req.getParameter("sort");
+        String order = req.getParameter("order");
         int page = Pagination.setPage(req);
         int itemsPerPage = Pagination.setItemsPerPage(req, "exhibitionsMainPage");
         String lang = setLanguage(req);
@@ -46,16 +53,20 @@ public class MainServlet extends HttpServlet {
         if (req.getParameter("topic") != null) {
             int themeId = Integer.parseInt(req.getParameter("topic"));
             exhibitions = exhibitionService.getExhibitionsByThemeId(themeId);
+        } else if (req.getParameter("from") != null) {
+            exhibitions = exhibitionService
+                    .getExhibitionsByDate(req.getParameter("from"),
+                            req.getParameter("to"));
         } else {
-            exhibitions = exhibitionService.getAllExhibitions();
+            exhibitions = exhibitionService.getAllExhibitions(sort, order);
         }
         req.setAttribute("ex",
                 Pagination.createListWithPagination(exhibitions, page, itemsPerPage));
         req.setAttribute("pagination",
                 Pagination.setPagination(exhibitions, itemsPerPage));
         req.setAttribute("themes", themeService.getThemes());
-                req.getSession().setAttribute("lang", lang);
-        req.getSession().setAttribute("origin", req.getRequestURI());
+        req.getSession().setAttribute("lang", lang);
+        req.getSession().setAttribute("origin", req.getRequestURI() + "?" + req.getQueryString());
     }
 
 

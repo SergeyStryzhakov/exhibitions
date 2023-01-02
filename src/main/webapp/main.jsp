@@ -15,78 +15,93 @@
     https://fonts.googleapis.com/css?family=
     Inconsolata:400,500,600,700|Raleway:400,400i,500,500i,600,600i,700,700i"
           rel="stylesheet">
-
     <!-- Vendor CSS Files -->
     <link href="assets/vendor/aos/aos.css" rel="stylesheet">
     <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
     <link href="assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
-
-    <!-- Template Main CSS File -->
     <link href="assets/css/style.css" rel="stylesheet">
+
+
     <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-</head>
+
 <body style="background: rgba(186,196,179,0.6)">
 <jsp:include page="WEB-INF/navbar.jsp"/>
 <main id="main">
 
     <!-- ======= Works Section ======= -->
-    <section class="section ">
-        <div class="container">
-            <div class="row mb-5 align-items-center">
-                <div class="col-md-12 col-lg-6 mb-4 mb-lg-0">
-                    <p class="h3 mb-0"><fmt:message key="main.label"/>:</p>
-                </div>
-                <div class="col-md-12 col-lg-6 text-center">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col">
+                <button class="btn btn-primary">Sort</button>
+                <div id="sort_param" class="row m-0 mt-5 text-center">
+                    <b class="fs-4 mb-2"> <fmt:message key="main.sort"/>:</b>
+                    <a class="btn btn-outline-primary mb-2" href="${path}/main?sort=title"><fmt:message
+                            key="main.sort.title"/></a>
+                    <a class="btn btn-outline-primary mb-2" href="${path}/main?sort=price"><fmt:message
+                            key="main.sort.price"/></a>
+                    <a class="btn btn-outline-primary mb-2" href="${path}/main?sort=date"><fmt:message
+                            key="main.sort.date"/></a>
+                    <form method="get" action="main" role="form">
+                        <label>From </label>
+                        <input type="date" class="datepicker-dropdown" name="from">
+                        <br/>
+                        <label>To </label>
+                        <input type="date" class="datepicker-dropdown" name="to">
+                        <br/>
+                        <input class="btn btn-primary" type="submit" value="Filter">
+                    </form>
 
-                    <div id="filters" class="filters">
-                        <b> <fmt:message key="main.sort.theme"/>:</b>
-                        <a href="${path}/main"><fmt:message key="main.sort.themes.all"/></a>
-                        <c:forEach var="theme" items="${themes}">
-                            <a href="${path}/main?topic=${theme.id}">${theme.name}</a>
-                        </c:forEach>
-                    </div>
-                </div>
-                <div class="mb-2">
-                    <label for="itemsPerPage"><fmt:message key="main.itemsPerPage"/></label>
-                    <select class="form-select-sm" id="itemsPerPage">
-                        <option value="6" ${sessionScope.exhibitionsMainPage == 6 ? 'selected' : ''}>6</option>
-                        <option value="12" ${sessionScope.exhibitionsMainPage == 12 ? 'selected' : ''}>12</option>
-                        <option value="18" ${sessionScope.exhibitionsMainPage == 18 ? 'selected' : ''}>18</option>
-                    </select>
                 </div>
             </div>
-            <div class="row ">
-                <c:forEach var="e" items="${ex}">
-                    <div class="item ${e.theme.name} col-sm-6 col-md-4 col-lg-4 mb-4">
-                        <a href="${path}/exhibitions/show?exid=${e.id}"
-                           class="item-wrap fancybox">
-                            <div class="work-info">
-                                <h3>${e.title}</h3>
-                                <span>${e.startDate} - ${e.finishDate}</span>
-                                <p>${e.price} <fmt:message key="main.currency"/></p>
-                            </div>
-                            <img class="img-thumbnail "
-                                 src="assets/img/${e.id}/${e.image}"
-                                 onError="this.onerror=null;this.src='assets/img/alt.jpg';"
-                                 alt="${e.title}"
-                                 style="height: 350px; width: 350px">
-                        </a>
+            <div class="col-8">
+                <div class="row text-center ">
+                    <h2 class="h3 mt-3"><fmt:message key="main.label"/></h2>
+                    <div class="col text-right">
+                        <label for="itemsPerPage"><fmt:message key="main.itemsPerPage"/></label>
+                        <select class="form-select-sm" id="itemsPerPage">
+                            <option value="6" ${sessionScope.exhibitionsMainPage == 6 ? 'selected' : ''}>6</option>
+                            <option value="12" ${sessionScope.exhibitionsMainPage == 12 ? 'selected' : ''}>12</option>
+                            <option value="18" ${sessionScope.exhibitionsMainPage == 18 ? 'selected' : ''}>18</option>
+                        </select>
                     </div>
-                </c:forEach>
+                </div>
+                <div class="row ">
+                    <c:forEach var="e" items="${ex}">
+                        <div class="item ${e.theme.name} col-sm-6 col-md-4 col-lg-4 mb-4">
+                            <a href="${path}/exhibitions/show?exid=${e.id}"
+                               class="item-wrap fancybox">
+                                <div class="work-info">
+                                    <h3>${e.title}</h3>
+                                    <span>${e.startDate} - ${e.finishDate}</span>
+                                    <p>${e.price} <fmt:message key="main.currency"/></p>
+                                </div>
+                                <img class="img-thumbnail "
+                                     src="assets/img/${e.id}/${e.image}"
+                                     onError="this.onerror=null;this.src='assets/img/alt.jpg';"
+                                     alt="${e.title}"
+                                     style="height: 350px; width: 400px">
+                            </a>
+                        </div>
+                    </c:forEach>
+                </div>
+                <jsp:include page="/WEB-INF/jsp/pagination.jsp"/>
             </div>
-            <jsp:include page="/WEB-INF/jsp/pagination.jsp"/>
+            <div class="col">
+                <div class="row m-0 mt-5 text-center">
+                    <b class="fs-4 mb-2"> <fmt:message key="main.sort.theme"/>:</b>
+                    <a class="btn btn-outline-primary mb-2" href="${path}/main"><fmt:message
+                            key="main.sort.themes.all"/></a>
+                    <c:forEach var="theme" items="${themes}">
+                        <a class="btn btn-outline-primary mb-2" href="${path}/main?topic=${theme.id}">${theme.name}</a>
+                    </c:forEach>
+                </div>
+            </div>
         </div>
-    </section><!-- End Works Section -->
+    </div>
 </main><!-- End #main -->
 <!-- Template Main JS File -->
-<script lang="javascript">
-    $('#itemsPerPage').on('change', function () {
-        $.get("${sessionScope.origin}", {itemsPerPage: $('#itemsPerPage').val()})
-            .done(function () {
-                location.reload();
-            });
-    });
-</script>
+
+<script src="assets/js/func.js"></script>
 </body>
 </html>

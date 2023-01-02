@@ -2,10 +2,12 @@ package controller.hall;
 
 import dto.ExhibitionDto;
 import entity.Hall;
+import exception.DBException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import service.HallService;
 import utils.Pagination;
+import utils.Utils;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -22,7 +24,11 @@ public class ShowHalls extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        processRequest(req, resp);
+        try {
+            processRequest(req);
+        } catch (DBException e) {
+            Utils.setErrorMessage(req, resp, e.getMessage());
+        }
         getServletContext().getRequestDispatcher("/WEB-INF/jsp/halls/halls.jsp")
                 .forward(req, resp);
     }
@@ -32,7 +38,7 @@ public class ShowHalls extends HttpServlet {
         hallService = (HallService) getServletContext().getAttribute("hallService");
     }
 
-    private void processRequest(HttpServletRequest req, HttpServletResponse resp) {
+    private void processRequest(HttpServletRequest req) throws DBException {
         int page = Pagination.setPage(req);
         int itemsPerPage = Pagination.setItemsPerPage(req, "hallsPerPage");
         List<Hall> halls = hallService.getHalls();

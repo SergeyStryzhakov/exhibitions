@@ -3,6 +3,7 @@ package controller.exhibition;
 import dto.ExhibitionDto;
 import entity.Exhibition;
 import entity.User;
+import exception.DBException;
 import exception.LoginException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,47 +43,55 @@ public class ShowExhibitions extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         User user = (User) req.getSession().getAttribute("user");
-        if (req.getParameter("exid") != null) {
-            processSingleExhibition(req);
-            getServletContext()
-                    .getRequestDispatcher("/WEB-INF/jsp/exhibitions/single.jsp")
-                    .forward(req, resp);
-            return;
-        }
+        System.out.println(req.getRequestURI());
+        System.out.println(req.getQueryString());
+        System.out.println(req.getRequestURL());
+        System.out.println(req.getSession().getAttribute("origin"));
+
         try {
+            if (req.getParameter("exid") != null) {
+                processSingleExhibition(req);
+                getServletContext()
+                        .getRequestDispatcher("/WEB-INF/jsp/exhibitions/single.jsp")
+                        .forward(req, resp);
+                return;
+            }
             if (Validation.isAdmin(user)) {
                 processAdminRequest(req);
                 getServletContext()
                         .getRequestDispatcher("/WEB-INF/jsp/exhibitions/exhibitions.jsp")
                         .forward(req, resp);
             }
-        } catch (LoginException ex) {
+        } catch (LoginException | DBException ex) {
             LOGGER.error(ex.getMessage());
             Utils.setErrorMessage(req, resp, ex.getMessage());
         }
     }
 
-    private void processSingleExhibition(HttpServletRequest req) {
+    private void processSingleExhibition(HttpServletRequest req) throws DBException {
         int exId = Integer.parseInt(req.getParameter("exid"));
         Exhibition exhibition = exhibitionService.getExhibitionById(exId);
         Map<Integer, Integer> availableTickets = exhibitionService.getAvailableTickets(exId);
         req.setAttribute("ex", exhibition);
         req.setAttribute("available", availableTickets);
-        req.getSession()
-                .setAttribute("origin",
-                        req.getRequestURI() + "?" + req.getQueryString());
+//        req.getSession()
+//                .setAttribute("origin",
+//                        req.getRequestURI() + "?" + req.getQueryString());
     }
 
-    private void processAdminRequest(HttpServletRequest req) {
+    private void processAdminRequest(HttpServletRequest req) throws DBException {
+        String sort = req.getParameter("sort");
+        String order = req.getParameter("order");
         int page = Pagination.setPage(req);
         int itemsPerPage = Pagination.setItemsPerPage(req, "exhibitionsPerPage");
-        List<ExhibitionDto> exhibitions = exhibitionService.getAllExhibitions();
+        List<ExhibitionDto> exhibitions;
+        exhibitions = exhibitionService.getAllExhibitions(sort, order);
         req.setAttribute("themes", themeService.getThemes());
         req.setAttribute("halls", hallService.getHalls());
         req.setAttribute("ex", Pagination
                 .createListWithPagination(exhibitions, page, itemsPerPage));
         req.setAttribute("pagination",
                 Pagination.setPagination(exhibitions, itemsPerPage));
-                req.getSession().setAttribute("origin", req.getRequestURI());
+        req.getSession().setAttribute("origin", req.getRequestURI());
     }
 }

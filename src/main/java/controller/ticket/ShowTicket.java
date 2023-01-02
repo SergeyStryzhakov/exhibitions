@@ -4,6 +4,7 @@ import dto.ExhibitionDto;
 import dto.TicketDto;
 import entity.Ticket;
 import entity.User;
+import exception.DBException;
 import exception.LoginException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,14 +38,14 @@ public class ShowTicket extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
             processRequest(req);
-        } catch (LoginException ex) {
+            req.getRequestDispatcher("/WEB-INF/jsp/tickets/tickets.jsp").forward(req, resp);
+        } catch (LoginException | DBException ex) {
             LOGGER.error(ex.getMessage());
             Utils.setErrorMessage(req, resp, ex.getMessage());
         }
-        req.getRequestDispatcher("/WEB-INF/jsp/tickets/tickets.jsp").forward(req, resp);
     }
 
-    private void processRequest(HttpServletRequest req) throws LoginException {
+    private void processRequest(HttpServletRequest req) throws LoginException, DBException {
         User user = (User) req.getSession().getAttribute("user");
         int page = Pagination.setPage(req);
         int itemsPerPage = Pagination.setItemsPerPage(req, "ticketsPerPage");

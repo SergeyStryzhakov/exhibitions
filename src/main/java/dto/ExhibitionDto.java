@@ -11,7 +11,7 @@ import java.util.List;
 public class ExhibitionDto extends Exhibition implements Serializable {
     private Theme theme;
     private ExhibitionState state;
-    private List<Hall> halls;
+
 
     public Theme getTheme() {
         return theme;
@@ -27,14 +27,6 @@ public class ExhibitionDto extends Exhibition implements Serializable {
 
     public void setState(ExhibitionState state) {
         this.state = state;
-    }
-
-    public List<Hall> getHalls() {
-        return halls;
-    }
-
-    public void setHalls(List<Hall> halls) {
-        this.halls = halls;
     }
 
     public static class Builder {

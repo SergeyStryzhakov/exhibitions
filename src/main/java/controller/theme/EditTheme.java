@@ -1,9 +1,11 @@
 package controller.theme;
 
 import entity.Theme;
+import exception.DBException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import service.ThemeService;
+import utils.Utils;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -20,9 +22,13 @@ public class EditTheme extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
-        int themeId = Integer.parseInt(req.getParameter("themeid"));
-        req.setAttribute("theme", themeService.getThemeById(themeId));
-        LOGGER.info("Edit theme id " + themeId + " started (GET request)");
+        try {
+            int themeId = Integer.parseInt(req.getParameter("themeid"));
+            req.setAttribute("theme", themeService.getThemeById(themeId));
+            LOGGER.info("Edit theme id " + themeId + " started (GET request)");
+        } catch (DBException e) {
+            Utils.setErrorMessage(req, resp, e.getMessage());
+        }
         getServletContext().getRequestDispatcher("/WEB-INF/jsp/themes/edit_theme.jsp")
                 .forward(req, resp);
     }
@@ -30,8 +36,12 @@ public class EditTheme extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
-        int themeId = Integer.parseInt(req.getParameter("themeid"));
-        processRequest(req, themeId);
+        try {
+            int themeId = Integer.parseInt(req.getParameter("themeid"));
+            processRequest(req, themeId);
+        } catch (DBException e) {
+            Utils.setErrorMessage(req, resp, e.getMessage());
+        }
         resp.sendRedirect(req.getContextPath() + "/themes/show");
     }
 
@@ -39,10 +49,9 @@ public class EditTheme extends HttpServlet {
     public void init() throws ServletException {
         themeService = (ThemeService) getServletContext()
                 .getAttribute("themeService");
-
     }
 
-    private void processRequest(HttpServletRequest req, int themeId) {
+    private void processRequest(HttpServletRequest req, int themeId) throws DBException {
         Theme editTheme = themeService.getThemeById(themeId);
         editTheme.setName(req.getParameter("name"));
         themeService.updateTheme(editTheme);

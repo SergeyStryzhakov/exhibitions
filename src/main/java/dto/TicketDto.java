@@ -36,7 +36,6 @@ public class TicketDto extends Ticket implements Serializable {
         this.hall = hall;
     }
 
-
     public TicketState getState() {
         return state;
     }

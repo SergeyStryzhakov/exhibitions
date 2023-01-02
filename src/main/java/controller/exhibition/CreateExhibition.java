@@ -3,11 +3,13 @@ package controller.exhibition;
 import dto.ExhibitionDto;
 import entity.ExhibitionState;
 import entity.Hall;
+import exception.DBException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import service.ExhibitionService;
 import service.HallService;
 import service.ThemeService;
+import utils.Utils;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
@@ -47,26 +49,55 @@ public class CreateExhibition extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
-        req.setAttribute("themes", themeService.getThemes());
-        req.setAttribute("halls", hallService.getHalls());
-        req.setAttribute("states", ExhibitionState.values());
         LOGGER.info("Create exhibition started (GET request)");
-        getServletContext().getRequestDispatcher("/WEB-INF/jsp/exhibitions/create_exhibition.jsp")
-                .forward(req, resp);
+        try {
+            req.setAttribute("themes", themeService.getThemes());
+            req.setAttribute("halls", hallService.getHalls());
+            req.setAttribute("states", ExhibitionState.values());
+            getServletContext()
+                    .getRequestDispatcher("/WEB-INF/jsp/exhibitions/create_exhibition.jsp")
+                    .forward(req, resp);
+        } catch (Exception e) {
+            Utils.setErrorMessage(req, resp, e.getMessage());
+        }
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
         LOGGER.info("Create exhibition started (POST request)");
-        int exId = processRequest(req);
-        String uploadImagePath = getServletContext().getRealPath("")
-                + UPLOAD_DIRECTORY + File.separator + exId;
-        uploadImage(req, uploadImagePath);
-        resp.sendRedirect(req.getContextPath() + "/exhibitions/show");
+        try {
+            int newExhibitionId = processRequest(req);
+            String uploadImagePath = getServletContext().getRealPath("")
+                    + UPLOAD_DIRECTORY + File.separator + newExhibitionId;
+            uploadImage(req, uploadImagePath);
+            resp.sendRedirect(req.getContextPath() + "/exhibitions/show");
+        } catch (Exception e) {
+            Utils.setErrorMessage(req, resp, e.getMessage());
+        }
     }
 
-    private List<Hall> processHallList(String[] halls) {
+    private int processRequest(HttpServletRequest req)
+            throws ServletException, IOException, DBException {
+        ExhibitionDto exhibitionDto = new ExhibitionDto.Builder()
+                .title(req.getParameter("title"))
+                .description(req.getParameter("description"))
+                .theme(themeService.getThemeById(
+                        Integer.parseInt(req.getParameter("theme"))))
+                .halls(processHallList(
+                        req.getParameterValues("halls")))
+                .startDate(req.getParameter("start-date"))
+                .finishDate(req.getParameter("finish-date"))
+                .openTime(req.getParameter("open-time"))
+                .closeTime(req.getParameter("close-time"))
+                .price(Integer.parseInt(req.getParameter("price")))
+                .image(req.getPart("image").getSubmittedFileName())
+                .state(ExhibitionState.valueOf(req.getParameter("state")))
+                .build();
+        return exhibitionService.createExhibition(exhibitionDto);
+    }
+
+    private List<Hall> processHallList(String[] halls) throws DBException {
         List<Hall> hallList = new ArrayList<>();
         for (String hall : halls) {
             int hallId = Integer.parseInt(hall);
@@ -86,25 +117,5 @@ public class CreateExhibition extends HttpServlet {
         }
         LOGGER.info("Image uploaded successfully => " +
                 uploadPath + File.separator + fileName);
-    }
-
-    private int processRequest(HttpServletRequest req)
-            throws ServletException, IOException {
-        ExhibitionDto exhibitionDto = new ExhibitionDto.Builder()
-                .title(req.getParameter("title"))
-                .description(req.getParameter("description"))
-                .theme(themeService.getThemeById(
-                        Integer.parseInt(req.getParameter("theme"))))
-                .halls(processHallList(
-                        req.getParameterValues("halls")))
-                .startDate(req.getParameter("start-date"))
-                .finishDate(req.getParameter("finish-date"))
-                .openTime(req.getParameter("open-time"))
-                .closeTime(req.getParameter("close-time"))
-                .price(Integer.parseInt(req.getParameter("price")))
-                .image(req.getPart("image").getSubmittedFileName())
-                .state(ExhibitionState.valueOf(req.getParameter("state")))
-                .build();
-        return exhibitionService.createExhibition(exhibitionDto);
     }
 }

@@ -3,6 +3,7 @@ package dao.impl;
 import dao.UserDAO;
 import dao.mapper.UserMapper;
 import entity.User;
+import exception.DBException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,23 +21,21 @@ public class UserDAOImpl implements UserDAO {
             "UPDATE users SET login=?, password=?, first_name=?, last_name=?, email=?, balance=?, role=? WHERE id=?";
     public static final String CREATE_USER =
             "INSERT INTO users (login, password, first_name, last_name, email, balance, role) VALUES (?,?,?,?,?,?,?)";
-    private Connection connection;
+
 
     @Override
-    public void setConnection(Connection connection) {
-        this.connection = connection;
-    }
-
-    @Override
-    public User create(User user) {
+    public User create(User user) throws DBException {
+        Connection connection = null;
         PreparedStatement statement = null;
+        ResultSet rs = null;
         try {
+            connection = getConnection();
             statement = connection
                     .prepareStatement(CREATE_USER,
                             Statement.RETURN_GENERATED_KEYS);
             fillUser(statement, user);
             statement.executeUpdate();
-            ResultSet rs = statement.getGeneratedKeys();
+            rs = statement.getGeneratedKeys();
             if (rs.next()) {
                 user.setId(rs.getInt(1));
                 LOGGER.info("User with id " + rs.getInt(1) + " created");
@@ -44,96 +43,122 @@ public class UserDAOImpl implements UserDAO {
             return user;
         } catch (SQLException e) {
             LOGGER.error(e.getMessage());
+            throw new DBException(
+                    "Error in create method " + e.getMessage());
         } finally {
-            close(statement);
+            close(rs, statement, connection);
         }
-        return user;
     }
 
     @Override
-    public List<User> findAll() {
+    public List<User> findAll() throws DBException {
+        Connection connection = null;
         Statement statement = null;
+        ResultSet rs = null;
         List<User> users = new ArrayList<>();
         try {
+            connection = getConnection();
             statement = connection.createStatement();
-            ResultSet rs = statement.executeQuery(FIND_ALL_USERS);
+            rs = statement.executeQuery(FIND_ALL_USERS);
             while (rs.next()) {
                 users.add(UserMapper.extractUser(rs));
             }
         } catch (SQLException e) {
             LOGGER.error(e.getMessage());
+            throw new DBException(
+                    "Error in findAll method " + e.getMessage());
         } finally {
-            close(statement);
+            close(rs, statement, connection);
         }
         return users;
     }
 
     @Override
-    public User findById(int id) {
+    public User findById(int id) throws DBException {
+        Connection connection = null;
         PreparedStatement statement = null;
+        ResultSet rs = null;
         User user = null;
         try {
+            connection = getConnection();
             statement = connection.prepareStatement(FIND_USER_BY_ID);
             statement.setInt(1, id);
-            ResultSet rs = statement.executeQuery();
+            rs = statement.executeQuery();
             while (rs.next()) {
                 user = UserMapper.extractUser(rs);
             }
         } catch (SQLException e) {
             LOGGER.error(e.getMessage());
+            throw new DBException(
+                    "Error in findById method with id " + id + " : "
+                            + e.getMessage());
         } finally {
-            close(statement);
+            close(rs, statement, connection);
         }
         return user;
     }
 
     @Override
-    public boolean delete(int id) {
+    public boolean delete(int id) throws DBException {
+        Connection connection = null;
         PreparedStatement statement = null;
         try {
+            connection = getConnection();
             statement = connection.prepareStatement(DELETE_USER);
             statement.setInt(1, id);
             statement.execute();
             return true;
         } catch (SQLException e) {
             LOGGER.error(e.getMessage());
+            throw new DBException(
+                    "Error in delete method with id " + id + " : "
+                            + e.getMessage());
         } finally {
-            close(statement);
+            close(null, statement, connection);
         }
-        return false;
     }
 
     @Override
-    public int update(User user) {
+    public int update(User user) throws DBException {
+        Connection connection = null;
         PreparedStatement statement = null;
         try {
+            connection = getConnection();
             statement = connection.prepareStatement(UPDATE_USER);
             int counter = fillUser(statement, user);
             statement.setInt(++counter, user.getId());
             return statement.executeUpdate();
         } catch (SQLException e) {
             LOGGER.error(e.getMessage());
+            throw new DBException(
+                    "Error in update method with id " + user.getId() + " : "
+                            + e.getMessage());
         } finally {
-            close(statement);
+            close(null, statement, connection);
         }
-        return 0;
     }
 
     @Override
-    public User findByLogin(String login) {
+    public User findByLogin(String login) throws DBException {
+        Connection connection = null;
         PreparedStatement statement = null;
+        ResultSet rs = null;
         User user = null;
         try {
+            connection = getConnection();
             statement = connection.prepareStatement(FIND_USER_BY_LOGIN);
             statement.setString(1, login);
-            ResultSet rs = statement.executeQuery();
+            rs = statement.executeQuery();
             while (rs.next()) {
                 user = UserMapper.extractUser(rs);
             }
         } catch (SQLException e) {
             LOGGER.error(e.getMessage());
+            throw new DBException(
+                    "Error in findByLogin method with login " + login + " : "
+                            + e.getMessage());
         } finally {
-            close(statement);
+            close(rs, statement, connection);
         }
         return user;
     }

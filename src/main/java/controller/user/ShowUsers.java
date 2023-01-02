@@ -1,8 +1,10 @@
 package controller.user;
 
 import entity.User;
+import exception.DBException;
 import service.UserService;
 import utils.Pagination;
+import utils.Utils;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -18,7 +20,11 @@ public class ShowUsers extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        processRequest(req, resp);
+        try {
+            processRequest(req);
+        } catch (DBException | NumberFormatException e) {
+            Utils.setErrorMessage(req, resp, e.getMessage());
+        }
         getServletContext().getRequestDispatcher("/WEB-INF/jsp/users/users.jsp").forward(req, resp);
     }
 
@@ -28,7 +34,7 @@ public class ShowUsers extends HttpServlet {
                 .getAttribute("userService");
     }
 
-    private void processRequest(HttpServletRequest req, HttpServletResponse resp) {
+    private void processRequest(HttpServletRequest req) throws DBException {
         int page = Pagination.setPage(req);
         int itemsPerPage = Pagination.setItemsPerPage(req, "usersPerPage");
         List<User> users = userService.getUsers();

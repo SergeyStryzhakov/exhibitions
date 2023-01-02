@@ -2,6 +2,7 @@ package controller.login;
 
 import at.favre.lib.crypto.bcrypt.BCrypt;
 import entity.User;
+import exception.DBException;
 import exception.LoginException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +32,6 @@ public class LoginServlet extends HttpServlet {
         String action = req.getParameter("action");
         if ("logout".equals(action)) {
             LOGGER.info(req.getSession().getAttribute("user").toString() + " logged out!");
-            //req.getSession().invalidate();
             req.getSession().removeAttribute("user");
         }
         resp.sendRedirect(req.getContextPath());
@@ -41,8 +41,8 @@ public class LoginServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String origin = req.getSession().getAttribute("origin").toString();
         String login = req.getParameter("login");
-        User user = userService.getUserByLogin(login);
         try {
+            User user = userService.getUserByLogin(login);
             if (user == null) {
                 throw new LoginException("Login not found. Try again!");
             } else if (!BCrypt.verifyer().verify(
@@ -52,11 +52,11 @@ public class LoginServlet extends HttpServlet {
             } else {
                 req.getSession().setAttribute("user", user);
             }
-        } catch (LoginException ex) {
+            resp.sendRedirect(origin == null ? req.getContextPath() : origin);
+        } catch (LoginException | DBException ex) {
             LOGGER.error(ex.getMessage());
             Utils.setErrorMessage(req, resp, ex.getMessage());
-            return;
         }
-        resp.sendRedirect(origin == null ? req.getContextPath() : origin);
+
     }
 }

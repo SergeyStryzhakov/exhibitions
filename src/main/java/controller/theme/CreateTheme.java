@@ -1,9 +1,11 @@
 package controller.theme;
 
 import entity.Theme;
+import exception.DBException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import service.ThemeService;
+import utils.Utils;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -37,14 +39,13 @@ public class CreateTheme extends HttpServlet {
             throws ServletException, IOException {
         try {
             processRequest(req);
-        } catch (SQLException e) {
-            LOGGER.error(e.getMessage(), e.getCause());
-            e.printStackTrace();
+        } catch (DBException e) {
+            Utils.setErrorMessage(req, resp, e.getMessage());
         }
         resp.sendRedirect(req.getContextPath() + "/themes/show");
     }
 
-    private void processRequest(HttpServletRequest req) throws SQLException {
+    private void processRequest(HttpServletRequest req) throws DBException {
         Theme theme = new Theme.Builder()
                 .name(req.getParameter("name"))
                 .build();

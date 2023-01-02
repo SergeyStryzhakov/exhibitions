@@ -3,55 +3,34 @@ package service;
 import dao.ThemeDAO;
 import dao.impl.ThemeDAOImpl;
 import entity.Theme;
-import utils.ConnectionPool;
+import exception.DBException;
 
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.List;
 
 public class ThemeService {
-    private ThemeDAO themeDAO;
+    private final ThemeDAO themeDAO;
 
     public ThemeService() {
         themeDAO = new ThemeDAOImpl();
     }
 
-    public Theme createTheme(Theme entity) throws SQLException {
-        Connection connection = ConnectionPool.getInstance().getConnection();
-        themeDAO.setConnection(connection);
-        Theme theme = themeDAO.create(entity);
-        ConnectionPool.close(connection);
-        return theme;
+    public Theme createTheme(Theme entity) throws DBException {
+        return themeDAO.create(entity);
     }
 
-    public List<Theme> getThemes() {
-        Connection connection = ConnectionPool.getInstance().getConnection();
-        themeDAO.setConnection(connection);
-        List<Theme> themes = themeDAO.findAll();
-        ConnectionPool.close(connection);
-        return themes;
+    public List<Theme> getThemes() throws DBException {
+        return themeDAO.findAll();
     }
 
-    public Theme getThemeById(int id) {
-        Connection connection = ConnectionPool.getInstance().getConnection();
-        themeDAO.setConnection(connection);
-        Theme theme = themeDAO.findById(id);
-        ConnectionPool.close(connection);
-        return theme;
+    public Theme getThemeById(int id) throws DBException {
+        return themeDAO.findById(id);
     }
 
-    public void deleteTheme(int id) {
-        Connection connection = ConnectionPool.getInstance().getConnection();
-        themeDAO.setConnection(connection);
+    public void deleteTheme(int id) throws DBException {
         themeDAO.delete(id);
-        ConnectionPool.close(connection);
     }
 
-    public int updateTheme(Theme theme) {
-        Connection connection = ConnectionPool.getInstance().getConnection();
-        themeDAO.setConnection(connection);
-        int result = themeDAO.update(theme);
-        ConnectionPool.close(connection);
-        return result;
+    public int updateTheme(Theme theme) throws DBException {
+        return themeDAO.update(theme);
     }
 }

@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" %>
-<%@ taglib prefix="myTag" uri="/WEB-INF/custom.tld" %>
+<%@ taglib prefix="myTag" uri="/WEB-INF/tld/custom.tld" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <fmt:setLocale value="${sessionScope.lang}"/>
@@ -58,11 +58,14 @@
                         </c:if>
                         <td>${t.hall.name}</td>
                         <td class="text-center">
-                            <img class="img-thumbnail"
-                                 src="${path}/assets/img/${t.exhibition.id}/${t.exhibition.image}"
-                                 onError="this.onerror=null;this.src='${path}/assets/img/alt.jpg';"
-                                 alt="${t.exhibition.title}"
-                                 style="height: 100px"></td>
+                            <a href="${path}/exhibitions/show?exid=${t.exhibition.id}">
+                                <img class="img-thumbnail"
+                                     src="${path}/assets/img/${t.exhibition.id}/${t.exhibition.image}"
+                                     onError="this.onerror=null;this.src='${path}/assets/img/alt.jpg';"
+                                     alt="${t.exhibition.title}"
+                                     style="height: 100px">
+                            </a>
+                        </td>
                         <td>${t.price} <fmt:message key="main.currency"/></td>
                         <td class="text-center">${t.operationDate}</td>
                         <td>${t.state}</td>
@@ -92,13 +95,6 @@
         </div>
     </div>
 </div>
-<script lang="javascript">
-    $('#itemsPerPage').on('change', function () {
-        $.get("${sessionScope.origin}", {itemsPerPage: $('#itemsPerPage').val()})
-            .done(function () {
-                location.reload();
-            });
-    });
-</script>
+<script src="${path}/assets/js/func.js"></script>
 </body>
 </html>

@@ -3,9 +3,8 @@ package service;
 import dao.HallDAO;
 import dao.impl.HallDAOImpl;
 import entity.Hall;
-import utils.ConnectionPool;
+import exception.DBException;
 
-import java.sql.Connection;
 import java.util.List;
 
 public class HallService {
@@ -15,43 +14,26 @@ public class HallService {
         hallDAO = new HallDAOImpl();
     }
 
-    public Hall createHall(Hall entity) {
-        Connection connection = ConnectionPool.getInstance().getConnection();
-        hallDAO.setConnection(connection);
-        Hall hall = hallDAO.create(entity);
-        ConnectionPool.close(connection);
-        return hall;
+    public Hall createHall(Hall entity) throws DBException {
+        return hallDAO.create(entity);
+
     }
 
-    public List<Hall> getHalls() {
-        Connection connection = ConnectionPool.getInstance().getConnection();
-        hallDAO.setConnection(connection);
-        List<Hall> halls = hallDAO.findAll();
-        ConnectionPool.close(connection);
-        return halls;
+    public List<Hall> getHalls() throws DBException {
+        return hallDAO.findAll();
     }
 
-    public Hall getHallById(int id) {
-        Connection connection = ConnectionPool.getInstance().getConnection();
-        hallDAO.setConnection(connection);
-        Hall hall = hallDAO.findById(id);
-        ConnectionPool.close(connection);
-        return hall;
+    public Hall getHallById(int id) throws DBException {
+        return hallDAO.findById(id);
     }
 
-    public void deleteHall(int id) {
-        Connection connection = ConnectionPool.getInstance().getConnection();
-        hallDAO.setConnection(connection);
+    public void deleteHall(int id) throws DBException {
         hallDAO.delete(id);
-        ConnectionPool.close(connection);
     }
 
-    public int updateHall(Hall hall) {
-        Connection connection = ConnectionPool.getInstance().getConnection();
-        hallDAO.setConnection(connection);
-        int result = hallDAO.update(hall);
-        ConnectionPool.close(connection);
-        return result;
+    public int updateHall(Hall hall) throws DBException {
+        return hallDAO.update(hall);
+
     }
 
 }

@@ -1,6 +1,7 @@
 package controller.theme;
 
 import entity.User;
+import exception.DBException;
 import exception.LoginException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +29,8 @@ public class DeleteTheme extends HttpServlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
         User user = (User) req.getSession().getAttribute("user");
         try {
             if (Validation.isAdmin(user)) {
@@ -36,17 +38,9 @@ public class DeleteTheme extends HttpServlet {
                 themeService.deleteTheme(themeId);
                 resp.sendRedirect(req.getContextPath() + "/themes/show");
             }
-        } catch (LoginException ex) {
-            LOGGER.error(ex.getMessage());
-            ex.printStackTrace();
-            Utils.setErrorMessage(req, resp, ex.getMessage());
+        } catch (LoginException | NumberFormatException | DBException e) {
+            Utils.setErrorMessage(req, resp, e.getMessage());
         }
     }
-
-    @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        throw new UnsupportedOperationException("Try GET request");
-    }
-
 
 }

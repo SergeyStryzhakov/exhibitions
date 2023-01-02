@@ -12,6 +12,7 @@ import dto.TicketDto;
 import entity.Ticket;
 import entity.TicketState;
 import entity.User;
+import exception.DBException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import utils.ConnectionPool;
@@ -35,96 +36,40 @@ public class TicketService {
         hallDAO = new HallDAOImpl();
     }
 
-    public List<TicketDto> getAllTickets() {
-        Connection connection = ConnectionPool.getInstance().getConnection();
-        ticketDao.setConnection(connection);
+    public List<TicketDto> getAllTickets() throws DBException {
         List<TicketDto> tickets = new ArrayList<>();
         for (Ticket ticket : ticketDao.findAll()) {
             tickets.add(convertTicketToDto(ticket));
         }
-        ConnectionPool.close(connection);
         return tickets;
     }
 
-    public List<TicketDto> getTicketsByUserId(int userId) {
-        Connection connection = ConnectionPool.getInstance().getConnection();
-        ticketDao.setConnection(connection);
+    public List<TicketDto> getTicketsByUserId(int userId) throws DBException {
         List<TicketDto> tickets = new ArrayList<>();
         for (Ticket ticket : ticketDao.findTicketsByUserId(userId)) {
             tickets.add(convertTicketToDto(ticket));
         }
-        ConnectionPool.close(connection);
+
         return tickets;
     }
 
-    public void createTicket(Ticket ticket) {
-        Connection connection = ConnectionPool.getInstance().getConnection();
-        ticketDao.setConnection(connection);
-        userDAO.setConnection(connection);
-        try {
-            connection.setAutoCommit(false);
-            ticketDao.create(ticket);
-            User currentUser = userDAO.findById(ticket.getUserId());
-            double reduceBalance = currentUser.getBalance() - ticket.getPrice();
-            currentUser.setBalance(reduceBalance);
-            userDAO.update(currentUser);
-            connection.commit();
-            connection.setAutoCommit(true);
-        } catch (SQLException ex) {
-            try {
-                connection.rollback();
-            } catch (SQLException e) {
-                LOGGER.error("Rollback creating ticket");
-                e.printStackTrace();
-            }
-            LOGGER.error(ex.getMessage(), ex.getCause());
-            ex.printStackTrace();
-        } finally {
-            ConnectionPool.close(connection);
-        }
+    public void createTicket(Ticket ticket) throws DBException {
+        ticketDao.create(ticket);
     }
 
-    public void refundTicket(int id) {
-        Connection connection = ConnectionPool.getInstance().getConnection();
-        ticketDao.setConnection(connection);
-        userDAO.setConnection(connection);
-        try {
-            connection.setAutoCommit(false);
-            Ticket ticket = ticketDao.findById(id);
-            ticket.setStateFromDb(TicketState.REFUNDED.name());
-            ticketDao.update(ticket);
-            User currentUser = userDAO.findById(ticket.getUserId());
-            currentUser.setBalance(currentUser.getBalance() + ticket.getPrice());
-            userDAO.update(currentUser);
-            connection.commit();
-            connection.setAutoCommit(true);
-        } catch (SQLException ex) {
-            try {
-                connection.rollback();
-            } catch (SQLException e) {
-                LOGGER.error("Rollback creating ticket");
-                e.printStackTrace();
-            }
-            LOGGER.error(ex.getMessage(), ex.getCause());
-            ex.printStackTrace();
-        } finally {
-            ConnectionPool.close(connection);
-        }
+    public void refundTicket(int id) throws DBException {
+        Ticket ticket = ticketDao.findById(id);
+        ticket.setStateFromDb(TicketState.REFUNDED.name());
+        ticketDao.update(ticket);
     }
 
-    public void deleteTicket(int ticketId) {
-        Connection connection = ConnectionPool.getInstance().getConnection();
-        ticketDao.setConnection(connection);
+    public void deleteTicket(int ticketId) throws DBException {
         ticketDao.delete(ticketId);
-        ConnectionPool.close(connection);
+
     }
 
 
-    private TicketDto convertTicketToDto(Ticket ticket) {
-        Connection connection = ConnectionPool.getInstance().getConnection();
-        exhibitionDAO.setConnection(connection);
-        hallDAO.setConnection(connection);
-        userDAO.setConnection(connection);
+    private TicketDto convertTicketToDto(Ticket ticket) throws DBException {
         TicketDto dto = new TicketDto.Builder().id(ticket.getId())
                 .user(userDAO.findById(ticket.getUserId()))
                 .exhibition(exhibitionDAO.findById(ticket.getExhibitionId()))
@@ -133,7 +78,6 @@ public class TicketService {
                 .state(TicketState.valueOf(ticket.getStateFromDb()))
                 .operationDate(ticket.getOperationDate())
                 .build();
-        ConnectionPool.close(connection);
         return dto;
     }
 

@@ -1,10 +1,12 @@
 package controller.theme;
 
 import entity.Theme;
+import exception.DBException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import service.ThemeService;
 import utils.Pagination;
+import utils.Utils;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -22,7 +24,11 @@ public class ShowThemes extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
-        processRequest(req, resp);
+        try {
+            processRequest(req);
+        } catch (DBException e) {
+            Utils.setErrorMessage(req, resp, e.getMessage());
+        }
         getServletContext().getRequestDispatcher("/WEB-INF/jsp/themes/themes.jsp")
                 .forward(req, resp);
     }
@@ -32,7 +38,7 @@ public class ShowThemes extends HttpServlet {
         themeService = (ThemeService) getServletContext().getAttribute("themeService");
     }
 
-    private void processRequest(HttpServletRequest req, HttpServletResponse resp) {
+    private void processRequest(HttpServletRequest req) throws DBException {
         int page = Pagination.setPage(req);
         int itemsPerPage = Pagination.setItemsPerPage(req, "themesPerPage");
         List<Theme> themes = themeService.getThemes();

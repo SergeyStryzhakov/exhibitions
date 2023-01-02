@@ -27,8 +27,6 @@
         <div class="row mb-4 mt-5 align-items-center">
             <div class="col-md-6" data-aos="fade-up">
                 <h2 class="text-center">${ex.title}</h2>
-                <p>${ex.description}</p>
-
             </div>
         </div>
     </div>
@@ -40,6 +38,7 @@
                          onError="this.onerror=null;this.src='${path}/assets/img/alt.jpg';"
                          alt="Image"
                          class="img-fluid">
+                    <p class="text-justify pt-3">${ex.description}</p>
                     <h4 class="h3 pt-3 mb-3 text-center"><fmt:message key="single.information"/>:</h4>
                     <ul class="list-unstyled list-line mb-5">
                         <li><fmt:message key="exhibition.start"/>: ${ex.startDate}</li>
@@ -48,6 +47,8 @@
                         <li><b><fmt:message key="exhibition.price"/>: ${ex.price} <fmt:message key="main.currency"/></b>
                         </li>
                     </ul>
+                    <a class="btn btn-primary" href="${path}">Main page</a>
+                    <button class="btn btn-primary" onclick="history.back();">Back</button>
                 </div>
                 <div class="col-md-5 ml-auto" data-aos="fade-up" data-aos-delay="100">
                     <div class="sticky-content">

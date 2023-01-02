@@ -32,23 +32,19 @@ public class DeleteExhibition extends HttpServlet {
         User user = (User) req.getSession().getAttribute("user");
         try {
             if (Validation.isAdmin(user)) {
-                String exid = req.getParameter("exid");
-                int exhibitionId = Integer.parseInt(exid);
-                exhibitionService.deleteExhibition(exhibitionId);
+                processRequest(req);
                 resp.sendRedirect(req.getContextPath() + "/exhibitions/show");
             }
-        }catch (LoginException ex) {
+        } catch (LoginException | DBException ex) {
             LOGGER.error(ex.getMessage());
-            ex.printStackTrace();
             Utils.setErrorMessage(req, resp, ex.getMessage());
         }
 
     }
 
-    @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        throw new UnsupportedOperationException("Try GET request");
+    private void processRequest(HttpServletRequest req) throws DBException {
+        String exid = req.getParameter("exid");
+        int exhibitionId = Integer.parseInt(exid);
+        exhibitionService.deleteExhibition(exhibitionId);
     }
-
-
 }

@@ -1,7 +1,9 @@
 package controller.user;
 
 import entity.User;
+import exception.DBException;
 import service.UserService;
+import utils.Utils;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -17,15 +19,28 @@ public class EditUser extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String uid = req.getParameter("uid");
-        int userId = Integer.parseInt(uid);
-        req.setAttribute("editUser", userService.getUserById(userId));
-        req.setAttribute("roles", User.Role.values());
+        try {
+            int userId = Integer.parseInt(uid);
+            req.setAttribute("editUser", userService.getUserById(userId));
+            req.setAttribute("roles", User.Role.values());
+        } catch (DBException | NumberFormatException e) {
+            Utils.setErrorMessage(req, resp, e.getMessage());
+        }
         getServletContext().getRequestDispatcher("/WEB-INF/jsp/users/edit_user.jsp").forward(req, resp);
 
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        try {
+            processRequest(req);
+        } catch (DBException | NumberFormatException e) {
+            Utils.setErrorMessage(req, resp, e.getMessage());
+        }
+        resp.sendRedirect(req.getContextPath() + "/users/show");
+    }
+
+    private void processRequest(HttpServletRequest req) throws DBException {
         int userId = Integer.parseInt(req.getParameter("uid"));
         User editUser = userService.getUserById(userId);
         editUser.setLogin(req.getParameter("login"));
@@ -35,7 +50,6 @@ public class EditUser extends HttpServlet {
         editUser.setBalance(Double.parseDouble(req.getParameter("balance")));
         editUser.setRole(User.Role.valueOf(req.getParameter("role")));
         userService.updateUser(editUser);
-        resp.sendRedirect(req.getContextPath() + "/users/show");
     }
 
     @Override

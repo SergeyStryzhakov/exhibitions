@@ -2,10 +2,12 @@ package controller.ticket;
 
 
 import entity.User;
+import exception.DBException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import service.TicketService;
 import service.UserService;
+import utils.Utils;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -28,11 +30,15 @@ public class RefundTicket extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        int ticketId = Integer.parseInt(req.getParameter("ticketid"));
-        User user = (User) req.getSession().getAttribute("user");
-        ticketService.refundTicket(ticketId);
-        req.getSession().setAttribute("user", userService.getUserById(user.getId()));
-        resp.sendRedirect((String) req.getSession().getAttribute("origin"));
+        try {
+            int ticketId = Integer.parseInt(req.getParameter("ticketid"));
+            User user = (User) req.getSession().getAttribute("user");
+            ticketService.refundTicket(ticketId);
+            req.getSession().setAttribute("user", userService.getUserById(user.getId()));
+            resp.sendRedirect((String) req.getSession().getAttribute("origin"));
+        } catch (DBException | NumberFormatException e) {
+            Utils.setErrorMessage(req, resp, e.getMessage());
 
+        }
     }
 }
