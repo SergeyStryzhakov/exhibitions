@@ -72,7 +72,7 @@ public class MainServlet extends HttpServlet {
 
     private String setLanguage(HttpServletRequest req) {
         return req.getParameter("lang") == null ?
-                req.getSession().getAttribute("lang").toString() :
+                "en" :
                 req.getParameter("lang");
     }
 

@@ -36,7 +36,7 @@ public class Pagination {
     public static List<?> createListWithPagination(List<?> list,
                                                    int page, int itemsPerPage) {
         List<?> temp = list.stream()
-                .skip((page - 1) * itemsPerPage)
+                .skip((long) (page - 1) * itemsPerPage)
                 .limit(itemsPerPage)
                 .collect(Collectors.toList());
         currentSize = temp.size();
@@ -46,6 +46,7 @@ public class Pagination {
     public static Map<String, Integer> setPagination(List<?> list,
                                                      int itemsPerPage) {
         Map<String, Integer> pagination = new HashMap<>();
+        if (list == null || itemsPerPage <= 0) return pagination;
         int pageCount = (int) Math.ceil((double) list.size() / itemsPerPage);
         pagination.put("pageCount", pageCount);
         pagination.put("maxSize", list.size());
