@@ -3,12 +3,14 @@ package utils;
 import org.junit.Test;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -26,7 +28,13 @@ public class PaginationTest {
     @Test
     public void setItemsPerPage() {
         HttpServletRequest request = mock(HttpServletRequest.class);
+        HttpSession session = mock(HttpSession.class);
+        session.setAttribute("itemName", "5");
         assertNull(request.getParameter("itemsPerPage"));
+        when(request.getSession()).thenReturn(session);
+        when(request.getParameter("itemsPerPage")).thenReturn("5");
+        assertEquals(5, Pagination.setItemsPerPage(request, anyString()));
+
     }
 
     @Test
@@ -40,11 +48,11 @@ public class PaginationTest {
     public void setPaginationTest() {
         List<Integer> testList = IntStream.rangeClosed(1, 10).boxed().collect(Collectors.toList());
         Map<String, Integer> testPaginationMap = new HashMap<>();
-                assertEquals(Pagination.setPagination(null, 1), testPaginationMap);
+        assertEquals(Pagination.setPagination(null, 1), testPaginationMap);
         assertEquals(Pagination.setPagination(testList, 0), testPaginationMap);
         testPaginationMap.put("pageCount", 4);
         testPaginationMap.put("maxSize", 10);
         testPaginationMap.put("currentSize", 3);
-        assertEquals(Pagination.setPagination(testList,3), testPaginationMap);
+        assertEquals(Pagination.setPagination(testList, 3), testPaginationMap);
     }
 }

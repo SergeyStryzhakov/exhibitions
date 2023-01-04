@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.*;
 
-@WebServlet(value = {"/main"})
+@WebServlet("/main")
 public class MainServlet extends HttpServlet {
     private ExhibitionService exhibitionService;
     private ThemeService themeService;
@@ -34,8 +34,7 @@ public class MainServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
             processRequest(req);
-            getServletContext()
-                    .getRequestDispatcher("/main.jsp")
+            req.getRequestDispatcher("/main.jsp")
                     .forward(req, resp);
         } catch (DBException e) {
             Utils.setErrorMessage(req, resp, e.getMessage());
@@ -72,7 +71,7 @@ public class MainServlet extends HttpServlet {
 
     private String setLanguage(HttpServletRequest req) {
         return req.getParameter("lang") == null ?
-                "en" :
+                (String) req.getSession().getAttribute("lang") :
                 req.getParameter("lang");
     }
 

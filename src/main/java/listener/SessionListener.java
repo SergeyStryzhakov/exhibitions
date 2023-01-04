@@ -15,6 +15,7 @@ public class SessionListener implements HttpSessionListener {
     @Override
     public void sessionCreated(HttpSessionEvent se) {
         LOGGER.info("Session id: " + se.getSession().getId());
+        se.getSession().setAttribute("lang", "en");
         se.getSession().setAttribute("exhibitionsMainPage", Pagination.DEFAULT_EXHIBITIONS_MAIN_PAGE);
         se.getSession().setAttribute("exhibitionsPerPage", Pagination.DEFAULT_EXHIBITIONS_PER_PAGE);
         se.getSession().setAttribute("hallsPerPage", Pagination.DEFAULT_HALLS_PER_PAGE);
