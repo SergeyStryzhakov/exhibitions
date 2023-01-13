@@ -33,7 +33,6 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col">
-                <button class="btn btn-primary">Sort</button>
                 <div id="sort_param" class="row m-0 mt-5 text-center">
                     <b class="fs-4 mb-2"> <fmt:message key="main.sort"/>:</b>
                     <a class="btn btn-outline-primary mb-2" href="${path}/main?sort=title"><fmt:message
@@ -42,14 +41,23 @@
                             key="main.sort.price"/></a>
                     <a class="btn btn-outline-primary mb-2" href="${path}/main?sort=date"><fmt:message
                             key="main.sort.date"/></a>
-                    <form method="get" action="main" role="form">
-                        <label>From </label>
+                    <form class="border border-primary rounded p-2" method="get" action="main" role="form">
+                        <label>
+                            <b class="text-primary"><fmt:message key="main.filter.date.title"></fmt:message></b>
+                        </label>
+                        <br/>
+                        <label><fmt:message key="main.filter.date.from"></fmt:message> </label>
+
                         <input type="date" class="datepicker-dropdown" name="from">
                         <br/>
-                        <label>To </label>
+                        <label><fmt:message key="main.filter.date.to"></fmt:message> </label>
+
                         <input type="date" class="datepicker-dropdown" name="to">
                         <br/>
-                        <input class="btn btn-primary" type="submit" value="Filter">
+                        <input
+                                class="btn btn-primary mt-2"
+                                type="submit"
+                                value="<fmt:message key="main.filter.date.button"></fmt:message>">
                     </form>
 
                 </div>

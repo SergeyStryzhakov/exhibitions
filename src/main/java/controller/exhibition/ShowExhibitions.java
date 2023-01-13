@@ -43,12 +43,7 @@ public class ShowExhibitions extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         User user = (User) req.getSession().getAttribute("user");
-        System.out.println(req.getRequestURI());
-        System.out.println(req.getQueryString());
-        System.out.println(req.getRequestURL());
-        System.out.println(req.getSession().getAttribute("origin"));
-
-        try {
+              try {
             if (req.getParameter("exid") != null) {
                 processSingleExhibition(req);
                 getServletContext()
@@ -74,9 +69,6 @@ public class ShowExhibitions extends HttpServlet {
         Map<Integer, Integer> availableTickets = exhibitionService.getAvailableTickets(exId);
         req.setAttribute("ex", exhibition);
         req.setAttribute("available", availableTickets);
-//        req.getSession()
-//                .setAttribute("origin",
-//                        req.getRequestURI() + "?" + req.getQueryString());
     }
 
     private void processAdminRequest(HttpServletRequest req) throws DBException {

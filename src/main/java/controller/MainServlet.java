@@ -39,7 +39,6 @@ public class MainServlet extends HttpServlet {
         } catch (DBException e) {
             Utils.setErrorMessage(req, resp, e.getMessage());
         }
-
     }
 
     private void processRequest(HttpServletRequest req) throws DBException {
@@ -48,11 +47,13 @@ public class MainServlet extends HttpServlet {
         int page = Pagination.setPage(req);
         int itemsPerPage = Pagination.setItemsPerPage(req, "exhibitionsMainPage");
         String lang = setLanguage(req);
+
         List<ExhibitionDto> exhibitions;
         if (req.getParameter("topic") != null) {
             int themeId = Integer.parseInt(req.getParameter("topic"));
             exhibitions = exhibitionService.getExhibitionsByThemeId(themeId);
-        } else if (req.getParameter("from") != null) {
+        } else if (req.getParameter("from") != "" &&
+                req.getParameter("from") != null) {
             exhibitions = exhibitionService
                     .getExhibitionsByDate(req.getParameter("from"),
                             req.getParameter("to"));

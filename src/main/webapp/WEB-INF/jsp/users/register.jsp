@@ -9,7 +9,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:400,700">
-    <title>Registration Form</title>
+    <title><fmt:message key="user.registration.title"/></title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
@@ -178,24 +178,6 @@
                 <fmt:message key="user.registration.button"/></button>
         </div>
     </form>
-    <!--<div class="text-center">Already have an account? <a href="#">Sign in</a></div>-->
-</div>
+   </div>
 </body>
-<script>
-
-    // $(document).ready(function () {
-    //     $("[type='button']").on('click', function (e) {
-    //         let pass = $("input[name='password']");
-    //         let conf_pass = $("input[name='confirm_password']");
-    //         console.log(pass.val());
-    //         console.log(conf_pass.val());
-    //
-    //         if (pass.val() !== conf_pass.val()) {
-    //             console.log(false);
-    //             pass.addClass("border border-danger");
-    //             conf_pass.addClass("border border-danger");
-    //         }
-    //     });
-    // });
-</script>
 </html>
