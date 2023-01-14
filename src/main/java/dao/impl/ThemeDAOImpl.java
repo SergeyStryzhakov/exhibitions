@@ -18,10 +18,10 @@ public class ThemeDAOImpl implements ThemeDAO {
     public static final String DELETE_THEME = "DELETE FROM themes WHERE id=?";
     public static final String UPDATE_THEME = "UPDATE themes SET name=? WHERE id=?";
     public static final String CREATE_THEME = "INSERT INTO themes (name) VALUES (?)";
+    private Connection connection;
 
     @Override
     public Theme create(Theme theme) throws DBException {
-        Connection connection = null;
         PreparedStatement statement = null;
         ResultSet rs = null;
         int counter = 0;
@@ -48,7 +48,6 @@ public class ThemeDAOImpl implements ThemeDAO {
     @Override
     public List<Theme> findAll() throws DBException {
         List<Theme> themes = new ArrayList<>();
-        Connection connection = null;
         Statement statement = null;
         ResultSet rs = null;
         try {
@@ -70,7 +69,6 @@ public class ThemeDAOImpl implements ThemeDAO {
 
     @Override
     public Theme findById(int id) throws DBException {
-        Connection connection = null;
         PreparedStatement statement = null;
         ResultSet rs = null;
         Theme theme = null;
@@ -95,7 +93,6 @@ public class ThemeDAOImpl implements ThemeDAO {
 
     @Override
     public boolean delete(int id) throws DBException {
-        Connection connection = null;
         PreparedStatement statement = null;
         try {
             connection = getConnection();
@@ -115,7 +112,6 @@ public class ThemeDAOImpl implements ThemeDAO {
 
     @Override
     public int update(Theme theme) throws DBException {
-        Connection connection = null;
         PreparedStatement statement = null;
         int counter = 0;
         try {

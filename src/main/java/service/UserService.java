@@ -1,7 +1,6 @@
 package service;
 
 import dao.UserDAO;
-import dao.impl.UserDAOImpl;
 import entity.User;
 import exception.DBException;
 
@@ -10,8 +9,8 @@ import java.util.List;
 public class UserService {
     private final UserDAO userDAO;
 
-    public UserService() {
-        userDAO = new UserDAOImpl();
+    public UserService(UserDAO userDAO) {
+        this.userDAO = userDAO;
     }
 
     public User createUser(User entity) throws DBException {
@@ -30,8 +29,8 @@ public class UserService {
         return userDAO.update(entity);
     }
 
-    public void deleteUser(int id) throws DBException {
-        userDAO.delete(id);
+    public boolean deleteUser(int id) throws DBException {
+       return userDAO.delete(id);
     }
 
     public User getUserByLogin(String login) throws DBException {

@@ -43,7 +43,7 @@ public class ShowExhibitions extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         User user = (User) req.getSession().getAttribute("user");
-              try {
+        try {
             if (req.getParameter("exid") != null) {
                 processSingleExhibition(req);
                 getServletContext()
@@ -73,11 +73,10 @@ public class ShowExhibitions extends HttpServlet {
 
     private void processAdminRequest(HttpServletRequest req) throws DBException {
         String sort = req.getParameter("sort");
-        String order = req.getParameter("order");
         int page = Pagination.setPage(req);
         int itemsPerPage = Pagination.setItemsPerPage(req, "exhibitionsPerPage");
         List<ExhibitionDto> exhibitions;
-        exhibitions = exhibitionService.getAllExhibitions(sort, order);
+        exhibitions = exhibitionService.getAllExhibitions(sort);
         req.setAttribute("themes", themeService.getThemes());
         req.setAttribute("halls", hallService.getHalls());
         req.setAttribute("ex", Pagination

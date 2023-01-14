@@ -22,13 +22,10 @@ public class HallDAOImpl implements HallDAO {
     private static final String FIND_HALLS_BY_EXHIBITION_ID =
             "SELECT * FROM halls JOIN exhibitions_halls eh ON halls.id = eh.hall_id " +
                     "WHERE exhibition_id=?";
-//    public static final String RESERVE_HALLS_FOR_EXHIBITION = "INSERT INTO exhibitions_halls " +
-//            "(exhibition_id, hall_id) VALUES (?,?)";
-//    public static final String UNRESERVE_HALLS_FOR_EXHIBITION = "DELETE FROM exhibitions_halls WHERE exhibition_id=?";
+    private Connection connection;
 
     @Override
     public Hall create(Hall hall) throws DBException {
-        Connection connection = null;
         PreparedStatement statement = null;
         ResultSet rs = null;
         int counter = 0;
@@ -59,7 +56,6 @@ public class HallDAOImpl implements HallDAO {
     @Override
     public List<Hall> findAll() throws DBException {
         List<Hall> halls = new ArrayList<>();
-        Connection connection = null;
         Statement statement = null;
         ResultSet rs = null;
         try {
@@ -81,7 +77,6 @@ public class HallDAOImpl implements HallDAO {
 
     @Override
     public Hall findById(int id) throws DBException {
-        Connection connection = null;
         PreparedStatement statement = null;
         ResultSet rs = null;
         Hall hall = null;
@@ -106,7 +101,6 @@ public class HallDAOImpl implements HallDAO {
 
     @Override
     public boolean delete(int id) throws DBException {
-        Connection connection = null;
         PreparedStatement statement = null;
         boolean result = false;
         try {
@@ -128,7 +122,6 @@ public class HallDAOImpl implements HallDAO {
 
     @Override
     public int update(Hall hall) throws DBException {
-        Connection connection = null;
         PreparedStatement statement = null;
         int counter = 0;
         int result = 0;
@@ -155,7 +148,6 @@ public class HallDAOImpl implements HallDAO {
     @Override
     public List<Hall> findByExhibitionId(int id) throws DBException {
         List<Hall> halls = new ArrayList<>();
-        Connection connection = null;
         PreparedStatement statement = null;
         ResultSet rs = null;
         try {
@@ -176,33 +168,4 @@ public class HallDAOImpl implements HallDAO {
         }
         return halls;
     }
-
-//    @Override
-//    public void reserveHallsForExhibition(int exId, List<Hall> halls) throws DBException {
-//        Connection connection = null;
-//        PreparedStatement statement = null;
-//        try {
-//            connection = getConnection();
-//            connection.setAutoCommit(false);
-//            statement = connection.prepareStatement(UNRESERVE_HALLS_FOR_EXHIBITION);
-//            statement.setInt(1, exId);
-//            statement.executeUpdate();
-//            statement = connection.prepareStatement(RESERVE_HALLS_FOR_EXHIBITION);
-//            for (Hall hall : halls) {
-//                statement.setInt(1, exId);
-//                statement.setInt(2, hall.getId());
-//                statement.addBatch();
-//            }
-//            statement.executeBatch();
-//            connection.commit();
-//            LOGGER.info(halls.size() + " reserved for exhibition id " + exId);
-//        } catch (SQLException e) {
-//            LOGGER.error(e.getMessage(), e);
-//            throw new DBException(
-//                    "Error in reserveHallsForExhibition method with ExId " + exId + " : "
-//                            + e.getMessage());
-//        } finally {
-//            close(null, statement, connection);
-//        }
-//    }
 }

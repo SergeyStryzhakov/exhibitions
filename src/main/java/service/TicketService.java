@@ -4,36 +4,30 @@ import dao.ExhibitionDAO;
 import dao.HallDAO;
 import dao.TicketDao;
 import dao.UserDAO;
-import dao.impl.ExhibitionDAOImpl;
-import dao.impl.HallDAOImpl;
-import dao.impl.TicketDaoImpl;
-import dao.impl.UserDAOImpl;
 import dto.TicketDto;
 import entity.Ticket;
 import entity.TicketState;
-import entity.User;
 import exception.DBException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import utils.ConnectionPool;
-
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class TicketService {
     private static final Logger LOGGER = LoggerFactory.getLogger(TicketService.class);
-    private UserDAO userDAO;
-    private TicketDao ticketDao;
-    private ExhibitionDAO exhibitionDAO;
-    private HallDAO hallDAO;
+    private final UserDAO userDAO;
+    private final TicketDao ticketDao;
+    private final ExhibitionDAO exhibitionDAO;
+    private final HallDAO hallDAO;
 
-    public TicketService() {
-        userDAO = new UserDAOImpl();
-        ticketDao = new TicketDaoImpl();
-        exhibitionDAO = new ExhibitionDAOImpl();
-        hallDAO = new HallDAOImpl();
+    public TicketService(UserDAO userDAO,
+                         TicketDao ticketDao,
+                         ExhibitionDAO exhibitionDAO,
+                         HallDAO hallDAO) {
+        this.userDAO = userDAO;
+        this.ticketDao = ticketDao;
+        this.exhibitionDAO = exhibitionDAO;
+        this.hallDAO = hallDAO;
     }
 
     public List<TicketDto> getAllTickets() throws DBException {

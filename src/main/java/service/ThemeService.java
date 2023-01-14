@@ -1,7 +1,6 @@
 package service;
 
 import dao.ThemeDAO;
-import dao.impl.ThemeDAOImpl;
 import entity.Theme;
 import exception.DBException;
 
@@ -10,8 +9,8 @@ import java.util.List;
 public class ThemeService {
     private final ThemeDAO themeDAO;
 
-    public ThemeService() {
-        themeDAO = new ThemeDAOImpl();
+    public ThemeService(ThemeDAO themeDAO) {
+        this.themeDAO = themeDAO;
     }
 
     public Theme createTheme(Theme entity) throws DBException {

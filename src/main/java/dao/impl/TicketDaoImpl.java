@@ -29,10 +29,10 @@ public class TicketDaoImpl implements TicketDao {
                     "VALUES (?,?,?,?,?,?)";
     public static final String UPDATE_BALANCE = "UPDATE users SET balance=? WHERE id=?";
     private UserDAO userDAO;
+    private Connection connection;
 
     @Override
     public Ticket create(Ticket ticket) throws DBException {
-        Connection connection = null;
         PreparedStatement statement = null;
         ResultSet rs = null;
         userDAO = new UserDAOImpl();
@@ -69,7 +69,6 @@ public class TicketDaoImpl implements TicketDao {
     @Override
     public List<Ticket> findAll() throws DBException {
         List<Ticket> tickets = new ArrayList<>();
-        Connection connection = null;
         Statement statement = null;
         ResultSet rs = null;
         try {
@@ -90,7 +89,6 @@ public class TicketDaoImpl implements TicketDao {
 
     @Override
     public Ticket findById(int id) throws DBException {
-        Connection connection = null;
         PreparedStatement statement = null;
         ResultSet rs = null;
         Ticket ticket = new Ticket();
@@ -116,7 +114,6 @@ public class TicketDaoImpl implements TicketDao {
     @Override
     public List<Ticket> findTicketsByUserId(int userId) throws DBException {
         List<Ticket> tickets = new ArrayList<>();
-        Connection connection = null;
         PreparedStatement statement = null;
         ResultSet rs = null;
         try {
@@ -141,7 +138,6 @@ public class TicketDaoImpl implements TicketDao {
     @Override
     public List<Ticket> findTicketsByHallId(int hallId, int exhibitionId) throws DBException {
         List<Ticket> tickets = new ArrayList<>();
-        Connection connection = null;
         PreparedStatement statement = null;
         ResultSet rs = null;
         try {
@@ -167,7 +163,6 @@ public class TicketDaoImpl implements TicketDao {
 
     @Override
     public boolean delete(int id) throws DBException {
-        Connection connection = null;
         PreparedStatement statement = null;
         boolean result;
         try {
@@ -189,7 +184,6 @@ public class TicketDaoImpl implements TicketDao {
 
     @Override
     public int update(Ticket ticket) throws DBException {
-        Connection connection = null;
         PreparedStatement statement = null;
         userDAO = new UserDAOImpl();
         int result;

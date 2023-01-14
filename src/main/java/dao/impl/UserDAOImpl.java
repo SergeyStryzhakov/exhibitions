@@ -22,10 +22,10 @@ public class UserDAOImpl implements UserDAO {
     public static final String CREATE_USER =
             "INSERT INTO users (login, password, first_name, last_name, email, balance, role) VALUES (?,?,?,?,?,?,?)";
 
+    private Connection connection;
 
     @Override
     public User create(User user) throws DBException {
-        Connection connection = null;
         PreparedStatement statement = null;
         ResultSet rs = null;
         try {
@@ -52,7 +52,6 @@ public class UserDAOImpl implements UserDAO {
 
     @Override
     public List<User> findAll() throws DBException {
-        Connection connection = null;
         Statement statement = null;
         ResultSet rs = null;
         List<User> users = new ArrayList<>();
@@ -75,7 +74,6 @@ public class UserDAOImpl implements UserDAO {
 
     @Override
     public User findById(int id) throws DBException {
-        Connection connection = null;
         PreparedStatement statement = null;
         ResultSet rs = null;
         User user = null;
@@ -100,7 +98,6 @@ public class UserDAOImpl implements UserDAO {
 
     @Override
     public boolean delete(int id) throws DBException {
-        Connection connection = null;
         PreparedStatement statement = null;
         try {
             connection = getConnection();
@@ -120,7 +117,6 @@ public class UserDAOImpl implements UserDAO {
 
     @Override
     public int update(User user) throws DBException {
-        Connection connection = null;
         PreparedStatement statement = null;
         try {
             connection = getConnection();
@@ -140,7 +136,6 @@ public class UserDAOImpl implements UserDAO {
 
     @Override
     public User findByLogin(String login) throws DBException {
-        Connection connection = null;
         PreparedStatement statement = null;
         ResultSet rs = null;
         User user = null;

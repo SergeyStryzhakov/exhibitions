@@ -28,11 +28,10 @@ public class ExhibitionDAOImpl implements ExhibitionDAO {
     public static final String RESERVE_HALLS_FOR_EXHIBITION = "INSERT INTO exhibitions_halls " +
             "(exhibition_id, hall_id) VALUES (?,?)";
     public static final String UNRESERVE_HALLS_FOR_EXHIBITION = "DELETE FROM exhibitions_halls WHERE exhibition_id=?";
-
+    private Connection connection;
 
     @Override
     public Exhibition create(Exhibition exhibition) throws DBException {
-        Connection connection = null;
         PreparedStatement statement = null;
         ResultSet rs = null;
         try {
@@ -69,7 +68,6 @@ public class ExhibitionDAOImpl implements ExhibitionDAO {
     @Override
     public List<Exhibition> findAll() throws DBException {
         List<Exhibition> exhibitions = new ArrayList<>();
-        Connection connection = null;
         Statement statement = null;
         ResultSet rs = null;
         try {
@@ -91,7 +89,6 @@ public class ExhibitionDAOImpl implements ExhibitionDAO {
     @Override
     public Exhibition findById(int id) throws DBException {
         Exhibition exhibition = null;
-        Connection connection = null;
         ResultSet rs = null;
         PreparedStatement statement = null;
         try {
@@ -116,7 +113,6 @@ public class ExhibitionDAOImpl implements ExhibitionDAO {
 
     @Override
     public boolean delete(int id) throws DBException {
-        Connection connection = null;
         PreparedStatement statement = null;
         try {
             connection = getConnection();
@@ -136,7 +132,6 @@ public class ExhibitionDAOImpl implements ExhibitionDAO {
 
     @Override
     public int update(Exhibition exhibition) throws DBException {
-        Connection connection = null;
         PreparedStatement statement = null;
         int result;
         try {
@@ -171,7 +166,6 @@ public class ExhibitionDAOImpl implements ExhibitionDAO {
     @Override
     public List<Exhibition> getExhibitionByThemeId(int id) throws DBException {
         List<Exhibition> exhibitions = new ArrayList<>();
-        Connection connection = null;
         PreparedStatement statement = null;
         ResultSet rs = null;
         try {
@@ -196,7 +190,6 @@ public class ExhibitionDAOImpl implements ExhibitionDAO {
     @Override
     public List<Exhibition> getExhibitionByDate(String from, String to) throws DBException {
         List<Exhibition> exhibitions = new ArrayList<>();
-        Connection connection = null;
         PreparedStatement statement = null;
         ResultSet rs = null;
         try {

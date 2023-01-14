@@ -1,17 +1,16 @@
 package service;
 
 import dao.HallDAO;
-import dao.impl.HallDAOImpl;
 import entity.Hall;
 import exception.DBException;
 
 import java.util.List;
 
 public class HallService {
-    private HallDAO hallDAO;
+    private final HallDAO hallDAO;
 
-    public HallService() {
-        hallDAO = new HallDAOImpl();
+    public HallService(HallDAO hallDAO) {
+        this.hallDAO = hallDAO;
     }
 
     public Hall createHall(Hall entity) throws DBException {

@@ -4,10 +4,6 @@ import dao.ExhibitionDAO;
 import dao.HallDAO;
 import dao.ThemeDAO;
 import dao.TicketDao;
-import dao.impl.ExhibitionDAOImpl;
-import dao.impl.HallDAOImpl;
-import dao.impl.ThemeDAOImpl;
-import dao.impl.TicketDaoImpl;
 import dto.ExhibitionDto;
 import entity.Exhibition;
 import entity.ExhibitionState;
@@ -16,6 +12,7 @@ import exception.DBException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -26,11 +23,14 @@ public class ExhibitionService {
     private final TicketDao ticketDao;
     private final ThemeDAO themeDAO;
 
-    public ExhibitionService() {
-        exhibitionDAO = new ExhibitionDAOImpl();
-        hallDAO = new HallDAOImpl();
-        ticketDao = new TicketDaoImpl();
-        themeDAO = new ThemeDAOImpl();
+    public ExhibitionService(ExhibitionDAO exhibitionDAO,
+                             HallDAO hallDAO,
+                             TicketDao ticketDao,
+                             ThemeDAO themeDAO) {
+        this.exhibitionDAO = exhibitionDAO;
+        this.hallDAO = hallDAO;
+        this.ticketDao = ticketDao;
+        this.themeDAO = themeDAO;
     }
 
     public ExhibitionDto getExhibitionById(int id) throws DBException {
@@ -54,8 +54,9 @@ public class ExhibitionService {
         return exhibitions;
     }
 
-    public List<ExhibitionDto> getAllExhibitions(String sortParam, String order) throws DBException {
+    public List<ExhibitionDto> getAllExhibitions(String sortParam) throws DBException {
         Map<String, Comparator<ExhibitionDto>> sortConfig = new HashMap<>();
+        ExhibitionDto dto;
         sortConfig.put("id", Comparator.comparingInt(ExhibitionDto::getId));
         sortConfig.put("title", Comparator.comparing(ExhibitionDto::getTitle));
         sortConfig.put("price", Comparator.comparing(ExhibitionDto::getPrice));
@@ -65,7 +66,9 @@ public class ExhibitionService {
 
         List<ExhibitionDto> exhibitions = new ArrayList<>();
         for (Exhibition exhibition : exhibitionDAO.findAll()) {
-            exhibitions.add(convertExhibitionToDto(exhibition));
+            dto = convertExhibitionToDto(exhibition);
+            updateExhibitionStateByFinishDate(dto);
+            exhibitions.add(dto);
         }
         exhibitions = exhibitions
                 .stream()
@@ -94,6 +97,20 @@ public class ExhibitionService {
             availableTickets.put(hall.getId(), hall.getCapacity() - ticketsCount);
         }
         return availableTickets;
+    }
+
+    private void updateExhibitionStateByFinishDate(ExhibitionDto exhibition) throws DBException {
+        LocalDate nowDate = LocalDate.now();
+        LocalDate exFinishDate;
+        exFinishDate = LocalDate.parse(exhibition.getFinishDate());
+        if (nowDate.isAfter(exFinishDate)
+                && exhibition.getState().equals(ExhibitionState.ACTIVE)) {
+            exhibition.setState(ExhibitionState.FINISHED);
+            updateExhibition(exhibition);
+            LOGGER.info("Change state to finished for exhibition with id "
+                    + exhibition.getId());
+        }
+
     }
 
     private ExhibitionDto convertExhibitionToDto(Exhibition exhibition) throws DBException {
