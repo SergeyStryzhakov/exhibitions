@@ -43,21 +43,21 @@
                             key="main.sort.date"/></a>
                     <form class="border border-primary rounded p-2" method="get" action="main" role="form">
                         <label>
-                            <b class="text-primary"><fmt:message key="main.filter.date.title"></fmt:message></b>
+                            <b class="text-primary"><fmt:message key="main.filter.date.title"/></b>
                         </label>
                         <br/>
-                        <label><fmt:message key="main.filter.date.from"></fmt:message> </label>
+                        <label><fmt:message key="main.filter.date.from"/> </label>
 
                         <input type="date" class="datepicker-dropdown" name="from">
                         <br/>
-                        <label><fmt:message key="main.filter.date.to"></fmt:message> </label>
+                        <label><fmt:message key="main.filter.date.to"/> </label>
 
                         <input type="date" class="datepicker-dropdown" name="to">
                         <br/>
                         <input
                                 class="btn btn-primary mt-2"
                                 type="submit"
-                                value="<fmt:message key="main.filter.date.button"></fmt:message>">
+                                value="<fmt:message key="main.filter.date.button"/>">
                     </form>
 
                 </div>
@@ -101,14 +101,14 @@
                     <a class="btn btn-outline-primary mb-2" href="${path}/main"><fmt:message
                             key="main.sort.themes.all"/></a>
                     <c:forEach var="theme" items="${themes}">
-                        <a class="btn btn-outline-primary mb-2" href="${path}/main?topic=${theme.id}">${theme.name}</a>
+                        <a class="btn btn-outline-primary mb-2"
+                           href="${path}/main?topic=${theme.id}">${theme.name}</a>
                     </c:forEach>
                 </div>
             </div>
         </div>
     </div>
 </main><!-- End #main -->
-<!-- Template Main JS File -->
 
 <script src="assets/js/func.js"></script>
 </body>

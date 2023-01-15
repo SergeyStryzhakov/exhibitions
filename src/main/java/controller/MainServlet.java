@@ -7,7 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import service.ExhibitionService;
 import service.ThemeService;
-import service.TicketService;
 import utils.Pagination;
 import utils.Utils;
 
@@ -35,7 +34,8 @@ public class MainServlet extends HttpServlet {
       }
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
         try {
             processRequest(req);
             req.getRequestDispatcher("/main.jsp")

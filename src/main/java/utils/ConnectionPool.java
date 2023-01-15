@@ -38,7 +38,9 @@ public class ConnectionPool {
 
     public static void close(Connection connection) {
         try {
-            if (connection != null) connection.close();
+            if (connection != null) {
+                connection.close();
+            }
         } catch (SQLException e) {
             LOGGER.error(e.getMessage());
         }

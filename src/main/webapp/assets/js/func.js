@@ -5,12 +5,4 @@ $(document).ready(function () {
                 window.location = window.location.pathname;
             });
     });
-    $('#btn-filter-date').on('click', function () {
-        $.get("/exhibitions/main",
-            {
-                'from': $('#from-date').val(),
-                'to': $('#to-date').val()
-            });
-
-    });
 });
