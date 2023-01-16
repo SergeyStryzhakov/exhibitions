@@ -54,7 +54,7 @@
                                 <i class="material-icons"
                                    data-toggle="tooltip"
                                    title="<fmt:message key="manage.action.edit"/>">&#xE254;</i></a>
-                            <a href="${page}/themes/delete?themeid=${t.id}" class="delete">
+                            <a href="${path}/themes/delete?themeid=${t.id}" class="delete">
                                 <i class="material-icons"
                                    data-toggle="tooltip"
                                    title="<fmt:message key="manage.action.delete"/>">&#xE872;</i></a>
