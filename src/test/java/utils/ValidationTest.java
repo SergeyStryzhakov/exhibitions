@@ -2,7 +2,6 @@ package utils;
 
 import entity.User;
 import exception.LoginException;
-import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.*;

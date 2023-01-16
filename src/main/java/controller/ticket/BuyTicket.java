@@ -26,11 +26,20 @@ public class BuyTicket extends HttpServlet {
     private UserService userService;
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    public void init() throws ServletException {
+        ticketService = (TicketService) getServletContext()
+                .getAttribute("ticketService");
+        userService = (UserService) getServletContext()
+                .getAttribute("userService");
+    }
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
         try {
             processRequest(req, resp);
-        } catch (LoginException | DBException ex) {
-            Utils.setErrorMessage(req, resp, ex.getMessage());
+        } catch (LoginException | DBException e) {
+            LOGGER.error(e.getMessage());
+            Utils.setErrorMessage(req, resp, e.getMessage());
         }
 
     }
@@ -54,11 +63,5 @@ public class BuyTicket extends HttpServlet {
         resp.sendRedirect(req.getContextPath() + "/exhibitions/show?exid=" + exhibitionId);
     }
 
-    @Override
-    public void init() throws ServletException {
-        ticketService = (TicketService) getServletContext()
-                .getAttribute("ticketService");
-        userService = (UserService) getServletContext()
-                .getAttribute("userService");
-    }
+
 }

@@ -39,6 +39,7 @@ public class DeleteTheme extends HttpServlet {
                 resp.sendRedirect(req.getContextPath() + "/themes/show");
             }
         } catch (LoginException | NumberFormatException | DBException e) {
+            LOGGER.error(e.getMessage());
             Utils.setErrorMessage(req, resp, e.getMessage());
         }
     }

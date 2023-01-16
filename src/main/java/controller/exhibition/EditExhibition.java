@@ -33,7 +33,6 @@ import java.util.List;
 public class EditExhibition extends HttpServlet {
     public static final Logger LOGGER = LoggerFactory.getLogger(EditExhibition.class);
     private static final String UPLOAD_DIRECTORY = "assets\\img";
-
     private ExhibitionService exhibitionService;
     private ThemeService themeService;
     private HallService hallService;
@@ -58,6 +57,7 @@ public class EditExhibition extends HttpServlet {
             req.setAttribute("halls", hallService.getHalls());
             req.setAttribute("states", ExhibitionState.values());
         } catch (DBException e) {
+            LOGGER.error(e.getMessage());
             Utils.setErrorMessage(req, resp, e.getMessage());
         }
         getServletContext().getRequestDispatcher("/WEB-INF/jsp/exhibitions/edit_exhibition.jsp")
@@ -74,8 +74,29 @@ public class EditExhibition extends HttpServlet {
             processRequest(req, exhibitionId, uploadImagePath);
             resp.sendRedirect(req.getContextPath() + "/exhibitions/show");
         } catch (DBException e) {
+            LOGGER.error(e.getMessage());
             Utils.setErrorMessage(req, resp, e.getMessage());
         }
+    }
+
+    private void processRequest(HttpServletRequest req, int exId, String uploadImagePath)
+            throws ServletException, IOException, DBException {
+        ExhibitionDto editEx = exhibitionService.getExhibitionById(exId);
+        editEx.setTitle(req.getParameter("title"));
+        editEx.setDescription(req.getParameter("description"));
+        editEx.setTheme(themeService.getThemeById(
+                Integer.parseInt(req.getParameter("theme"))));
+        editEx.setHalls(processHallList(
+                req.getParameterValues("halls")));
+        editEx.setStartDate(req.getParameter("start-date"));
+        editEx.setFinishDate(req.getParameter("finish-date"));
+        editEx.setOpenTime(req.getParameter("open-time"));
+        editEx.setCloseTime(req.getParameter("close-time"));
+        editEx.setPrice(Integer.parseInt(req.getParameter("price")));
+        String fileName = uploadImage(req, uploadImagePath);
+        editEx.setImage(fileName == null ? editEx.getImage() : fileName);
+        editEx.setState(ExhibitionState.valueOf(req.getParameter("state")));
+        exhibitionService.updateExhibition(editEx);
     }
 
     private List<Hall> processHallList(String[] halls) throws DBException {
@@ -101,25 +122,4 @@ public class EditExhibition extends HttpServlet {
                 uploadPath + File.separator + fileName);
         return fileName;
     }
-
-    private void processRequest(HttpServletRequest req, int exId, String uploadImagePath)
-            throws ServletException, IOException, DBException {
-        ExhibitionDto editEx = exhibitionService.getExhibitionById(exId);
-        editEx.setTitle(req.getParameter("title"));
-        editEx.setDescription(req.getParameter("description"));
-        editEx.setTheme(themeService.getThemeById(
-                Integer.parseInt(req.getParameter("theme"))));
-        editEx.setHalls(processHallList(
-                req.getParameterValues("halls")));
-        editEx.setStartDate(req.getParameter("start-date"));
-        editEx.setFinishDate(req.getParameter("finish-date"));
-        editEx.setOpenTime(req.getParameter("open-time"));
-        editEx.setCloseTime(req.getParameter("close-time"));
-        editEx.setPrice(Integer.parseInt(req.getParameter("price")));
-        String fileName = uploadImage(req, uploadImagePath);
-        editEx.setImage(fileName == null ? editEx.getImage() : fileName);
-        editEx.setState(ExhibitionState.valueOf(req.getParameter("state")));
-        exhibitionService.updateExhibition(editEx);
-    }
-
 }

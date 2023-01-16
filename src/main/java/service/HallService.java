@@ -15,7 +15,6 @@ public class HallService {
 
     public Hall createHall(Hall entity) throws DBException {
         return hallDAO.create(entity);
-
     }
 
     public List<Hall> getHalls() throws DBException {

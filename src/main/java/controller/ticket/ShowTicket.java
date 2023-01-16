@@ -1,8 +1,6 @@
 package controller.ticket;
 
-import dto.ExhibitionDto;
 import dto.TicketDto;
-import entity.Ticket;
 import entity.User;
 import exception.DBException;
 import exception.LoginException;
@@ -21,7 +19,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @WebServlet("/tickets/show")
 public class ShowTicket extends HttpServlet {
@@ -35,13 +32,14 @@ public class ShowTicket extends HttpServlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
         try {
             processRequest(req);
             req.getRequestDispatcher("/WEB-INF/jsp/tickets/tickets.jsp").forward(req, resp);
-        } catch (LoginException | DBException ex) {
-            LOGGER.error(ex.getMessage());
-            Utils.setErrorMessage(req, resp, ex.getMessage());
+        } catch (LoginException | DBException e) {
+            LOGGER.error(e.getMessage());
+            Utils.setErrorMessage(req, resp, e.getMessage());
         }
     }
 
@@ -56,7 +54,8 @@ public class ShowTicket extends HttpServlet {
         if (Validation.isAdmin(user)) {
             tickets = ticketService.getAllTickets();
         }
-        req.setAttribute("tickets", Pagination.createListWithPagination(tickets, page, itemsPerPage));
+        req.setAttribute("tickets",
+                Pagination.createListWithPagination(tickets, page, itemsPerPage));
         req.setAttribute("pagination",
                 Pagination.setPagination(tickets, itemsPerPage));
         req.getSession().setAttribute("origin", req.getRequestURI());

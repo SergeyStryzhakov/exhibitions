@@ -38,6 +38,7 @@ public class CreateHall extends HttpServlet {
         try {
             processRequest(req);
         } catch (DBException e) {
+            LOGGER.error(e.getMessage());
             Utils.setErrorMessage(req, resp, e.getMessage());
         }
         resp.sendRedirect(req.getContextPath() + "/halls/show");

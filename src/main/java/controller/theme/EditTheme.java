@@ -20,6 +20,12 @@ public class EditTheme extends HttpServlet {
     private ThemeService themeService;
 
     @Override
+    public void init() throws ServletException {
+        themeService = (ThemeService) getServletContext()
+                .getAttribute("themeService");
+    }
+
+    @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
         try {
@@ -27,6 +33,7 @@ public class EditTheme extends HttpServlet {
             req.setAttribute("theme", themeService.getThemeById(themeId));
             LOGGER.info("Edit theme id " + themeId + " started (GET request)");
         } catch (DBException e) {
+            LOGGER.error(e.getMessage());
             Utils.setErrorMessage(req, resp, e.getMessage());
         }
         getServletContext().getRequestDispatcher("/WEB-INF/jsp/themes/edit_theme.jsp")
@@ -40,15 +47,10 @@ public class EditTheme extends HttpServlet {
             int themeId = Integer.parseInt(req.getParameter("themeid"));
             processRequest(req, themeId);
         } catch (DBException e) {
+            LOGGER.error(e.getMessage());
             Utils.setErrorMessage(req, resp, e.getMessage());
         }
         resp.sendRedirect(req.getContextPath() + "/themes/show");
-    }
-
-    @Override
-    public void init() throws ServletException {
-        themeService = (ThemeService) getServletContext()
-                .getAttribute("themeService");
     }
 
     private void processRequest(HttpServletRequest req, int themeId) throws DBException {

@@ -1,6 +1,5 @@
 package controller.hall;
 
-import dto.ExhibitionDto;
 import entity.Hall;
 import exception.DBException;
 import org.slf4j.Logger;
@@ -23,19 +22,19 @@ public class ShowHalls extends HttpServlet {
     private HallService hallService;
 
     @Override
+    public void init() throws ServletException {
+        hallService = (HallService) getServletContext().getAttribute("hallService");
+    }
+    @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
             processRequest(req);
         } catch (DBException e) {
+            LOGGER.error(e.getMessage());
             Utils.setErrorMessage(req, resp, e.getMessage());
         }
         getServletContext().getRequestDispatcher("/WEB-INF/jsp/halls/halls.jsp")
                 .forward(req, resp);
-    }
-
-    @Override
-    public void init() throws ServletException {
-        hallService = (HallService) getServletContext().getAttribute("hallService");
     }
 
     private void processRequest(HttpServletRequest req) throws DBException {

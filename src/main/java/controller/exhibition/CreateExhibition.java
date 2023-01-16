@@ -58,6 +58,7 @@ public class CreateExhibition extends HttpServlet {
                     .getRequestDispatcher("/WEB-INF/jsp/exhibitions/create_exhibition.jsp")
                     .forward(req, resp);
         } catch (Exception e) {
+            LOGGER.error(e.getMessage());
             Utils.setErrorMessage(req, resp, e.getMessage());
         }
     }
@@ -73,6 +74,7 @@ public class CreateExhibition extends HttpServlet {
             uploadImage(req, uploadImagePath);
             resp.sendRedirect(req.getContextPath() + "/exhibitions/show");
         } catch (Exception e) {
+            LOGGER.error(e.getMessage());
             Utils.setErrorMessage(req, resp, e.getMessage());
         }
     }

@@ -29,7 +29,8 @@ public class RefundTicket extends HttpServlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
         try {
             int ticketId = Integer.parseInt(req.getParameter("ticketid"));
             User user = (User) req.getSession().getAttribute("user");
@@ -37,6 +38,7 @@ public class RefundTicket extends HttpServlet {
             req.getSession().setAttribute("user", userService.getUserById(user.getId()));
             resp.sendRedirect((String) req.getSession().getAttribute("origin"));
         } catch (DBException | NumberFormatException e) {
+            LOGGER.error(e.getMessage());
             Utils.setErrorMessage(req, resp, e.getMessage());
 
         }

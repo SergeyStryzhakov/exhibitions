@@ -27,6 +27,7 @@ public class ShowThemes extends HttpServlet {
         try {
             processRequest(req);
         } catch (DBException e) {
+            LOGGER.error(e.getMessage());
             Utils.setErrorMessage(req, resp, e.getMessage());
         }
         getServletContext().getRequestDispatcher("/WEB-INF/jsp/themes/themes.jsp")

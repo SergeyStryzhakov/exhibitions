@@ -20,12 +20,18 @@ public class EditHall extends HttpServlet {
     private HallService hallService;
 
     @Override
+    public void init() throws ServletException {
+        hallService = (HallService) getServletContext().getAttribute("hallService");
+    }
+
+    @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
             int hallId = Integer.parseInt(req.getParameter("hallid"));
             req.setAttribute("hall", hallService.getHallById(hallId));
             LOGGER.info("Edit hall id " + hallId + " started (GET request)");
         } catch (DBException | NumberFormatException e) {
+            LOGGER.error(e.getMessage());
             Utils.setErrorMessage(req, resp, e.getMessage());
         }
         getServletContext().getRequestDispatcher("/WEB-INF/jsp/halls/edit_hall.jsp")
@@ -38,15 +44,10 @@ public class EditHall extends HttpServlet {
             int hallId = Integer.parseInt(req.getParameter("hallid"));
             processRequest(req, hallId);
         } catch (DBException | NumberFormatException e) {
+            LOGGER.error(e.getMessage());
             Utils.setErrorMessage(req, resp, e.getMessage());
         }
         resp.sendRedirect(req.getContextPath() + "/halls/show");
-    }
-
-    @Override
-    public void init() throws ServletException {
-        hallService = (HallService) getServletContext().getAttribute("hallService");
-
     }
 
     private void processRequest(HttpServletRequest req, int hallId) throws DBException {

@@ -18,8 +18,8 @@ import java.io.IOException;
 
 @WebServlet("/tickets/delete")
 public class DeleteTicket extends HttpServlet {
-private static final Logger LOGGER = LoggerFactory.getLogger(DeleteTicket.class);
-private TicketService ticketService;
+    private static final Logger LOGGER = LoggerFactory.getLogger(DeleteTicket.class);
+    private TicketService ticketService;
 
     @Override
     public void init() throws ServletException {
@@ -27,7 +27,8 @@ private TicketService ticketService;
     }
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
         User user = (User) req.getSession().getAttribute("user");
         try {
             if (Validation.isAdmin(user)) {
@@ -36,8 +37,9 @@ private TicketService ticketService;
                 ticketService.deleteTicket(ticketId);
                 resp.sendRedirect(req.getContextPath() + "/tickets/show");
             }
-        }catch (LoginException | DBException ex) {
-               Utils.setErrorMessage(req, resp, ex.getMessage());
+        } catch (LoginException | DBException e) {
+            LOGGER.error(e.getMessage());
+            Utils.setErrorMessage(req, resp, e.getMessage());
         }
     }
 }

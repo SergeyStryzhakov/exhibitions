@@ -2,7 +2,6 @@ package dao.impl;
 
 import dao.HallDAO;
 import dao.mapper.HallMapper;
-import entity.Exhibition;
 import entity.Hall;
 import exception.DBException;
 import org.slf4j.Logger;
@@ -102,7 +101,7 @@ public class HallDAOImpl implements HallDAO {
     @Override
     public boolean delete(int id) throws DBException {
         PreparedStatement statement = null;
-        boolean result = false;
+        boolean result;
         try {
             connection = getConnection();
             statement = connection.prepareStatement(DELETE_HALL);
@@ -124,7 +123,7 @@ public class HallDAOImpl implements HallDAO {
     public int update(Hall hall) throws DBException {
         PreparedStatement statement = null;
         int counter = 0;
-        int result = 0;
+        int result;
         try {
             connection = getConnection();
             statement = connection.prepareStatement(UPDATE_HALL);

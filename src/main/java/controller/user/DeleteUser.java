@@ -22,7 +22,14 @@ public class DeleteUser extends HttpServlet {
     private UserService userService;
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    public void init() throws ServletException {
+        userService = (UserService) getServletContext()
+                .getAttribute("userService");
+    }
+
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
         User user = (User) req.getSession().getAttribute("user");
         try {
             if (Validation.isAdmin(user)) {
@@ -32,13 +39,10 @@ public class DeleteUser extends HttpServlet {
                 resp.sendRedirect(req.getContextPath() + "/users/show");
             }
         } catch (DBException | LoginException e) {
+            LOGGER.error(e.getMessage());
             Utils.setErrorMessage(req, resp, e.getMessage());
         }
     }
 
-    @Override
-    public void init() throws ServletException {
-        userService = (UserService) getServletContext()
-                .getAttribute("userService");
-    }
+
 }
